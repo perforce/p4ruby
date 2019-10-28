@@ -1,0 +1,65 @@
+# Created by .gitignore support plugin (hsz.mobi)
+### Ruby template
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+## Specific to RubyMotion:
+.dat*
+.repl_history
+build/
+
+## Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/rdoc/
+
+## Environment normalisation:
+/.bundle/
+/lib/bundler/man/
+
+p4-bin/**/p4api-2014.2*/
+
+# for a library or gem, you might want to ignore these files since the code is
+# intended to run in multiple environments; otherwise, check them in:
+Gemfile.lock
+.ruby-version
+.ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+.rvmrc
+
+# Ignore RubyMine project files
+.idea/
+
+# Ignore the 'working area' convention of p4util
+work/
+
+# This can exist when running the rake compile task for testing
+p4.bundle
+P4.bundle
+p4.so
+P4.so
+
+# This is the output directory of docbook
+doc/
+
+# The docbook build scripts seem to generate some compiled python classes
+p4-doc/**/*.pyc
+
+# This is actually under the p4-doc/ folder, and is only copied to prepare
+# distribution packages
+README
+
+# This is generated so any Jenkins system can pick up variables from the project
+# easily.
+build.properties
+.p4config
+.p4ignore
