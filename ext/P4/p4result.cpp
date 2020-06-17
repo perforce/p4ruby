@@ -57,6 +57,7 @@ P4Result::P4Result()
     VALUE cP4	= rb_const_get_at( rb_cObject, idP4 );
     cP4Msg	= rb_const_get_at( cP4, idP4Msg );
 
+    Reset();
 }
 
 

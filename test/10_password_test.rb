@@ -33,6 +33,7 @@ class TC_Password < Test::Unit::TestCase
   end
 
   def test_password
+    puts "10 - Password"
     assert(p4, 'Failed to create Perforce client')
 
     ticket_file = client_root + '/.non-exist'

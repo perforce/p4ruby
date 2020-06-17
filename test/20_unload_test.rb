@@ -34,6 +34,7 @@ class TC_Unload < Test::Unit::TestCase
   end
 
   def test_unload
+    puts "20 - Unload test"
     assert( p4, "Failed to create Perforce client" )
 
     begin

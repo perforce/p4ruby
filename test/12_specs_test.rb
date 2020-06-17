@@ -191,6 +191,7 @@ Description:
   end
 
   def test_specs
+    puts "12 - Specs test"
     assert( p4, "Failed to create Perforce client" )
     begin
       assert( p4.connect, "Failed to connect to Perforce server" )

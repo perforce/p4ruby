@@ -679,13 +679,6 @@ static VALUE p4_get_messages( VALUE self )
     return p4->GetMessages();
 }
 
-static VALUE p4_reset( VALUE self )
-{
-    P4ClientApi *p4;
-    Data_Get_Struct( self, P4ClientApi, p4 );
-    return p4->Reset();
-}
-
 static VALUE p4_get_warnings( VALUE self )
 {
     P4ClientApi	*p4;
@@ -1305,7 +1298,6 @@ void	Init_P4()
     rb_define_method( cP4, "connect", 	RUBY_METHOD_FUNC(p4_connect)     , 0 );
     rb_define_method( cP4, "connected?",RUBY_METHOD_FUNC(p4_connected)   , 0 );
     rb_define_method( cP4, "disconnect", RUBY_METHOD_FUNC(p4_disconnect) , 0 );
-    rb_define_method( cP4, "reset",  RUBY_METHOD_FUNC(p4_reset), 0 );
 
     // Running commands - general purpose commands
     rb_define_method( cP4, "run", 	RUBY_METHOD_FUNC(p4_run)         ,-2 );

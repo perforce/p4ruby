@@ -6,10 +6,19 @@ require 'mkmf'
 require 'net/ftp'
 require 'P4/version'
 require 'rbconfig'
+require 'openssl'
 
 # Set this to the main version directory we look up in ftp.perforce.com for the P4API
 # This is ignored if you specify the version on the command line.
-P4API_VERSION_DIR = 'r19.1'
+# Changed the hardcoded string so that the version is now derived from version.rb file
+#P4API_VERSION_DIR = 'r19.1'
+def p4api_version_dir
+        ver=P4::Version.split(".")
+        p4_major = ver[0].chars.last(2).join
+        p4_minor = ver[1]
+        dir = "r" + p4_major + "." + p4_minor
+end
+
 
 #==============================================================================
 # Provide platform variables in P4-specific format
@@ -102,6 +111,15 @@ def calculate_p4osver
   return ver
 end
 
+def gcc
+  @gcc ||= calculate_gcc
+end
+
+def calculate_gcc
+  gcc = RbConfig::CONFIG["GCC"]
+  return gcc
+end
+
 def uname_platform
   @uname_platform ||= calculate_uname_platform
 end
@@ -154,6 +172,13 @@ def set_platform_opts
       CONFIG['LDSHAREDXX'] = CONFIG['LDSHARED'] + ' -static-libgcc'
   end
 end
+
+def set_platform_cxxflags
+  if (p4osname == 'LINUX') && (gcc == 'yes')
+    $CXXFLAGS += " -std=c++11 "
+  end
+end
+
 
 def set_platform_cppflags
   $CPPFLAGS += "-DOS_#{p4osname} "
@@ -446,12 +471,33 @@ def ftp_download_dir(version)
 end
 
 def filename
+  openssl_number = OpenSSL::OPENSSL_VERSION.split(' ')[1].to_s
+  openssl_number = openssl_number.slice(0, (openssl_number.rindex('.')))
+
   if RbConfig::CONFIG['target_os'].downcase =~ /nt|mswin|mingw/
-    'p4api.zip'
+    filename = 'p4api.zip'
+    if !openssl_number.to_s.empty?
+        case openssl_number.to_s
+            when /1.1/
+                filename = 'p4api-openssl1.1.1.zip'
+            when /1.0/
+                filename = 'p4api-openssl1.0.2.zip'
+             end
+    end
   else
-    'p4api.tgz'
+    filename = 'p4api.tgz'
+    if !openssl_number.to_s.empty?
+        case openssl_number.to_s
+            when /1.1/
+                filename = 'p4api-glibc2.3-openssl1.1.1.tgz'
+            when /1.0/
+                filename = 'p4api-glibc2.3-openssl1.0.2.tgz'
+        end
+    end
   end
+  return filename
 end
+
 
 def remote_files_matching(ftp, dir, regex)
   ftp.ls(dir.to_s).map { |entry|
@@ -500,9 +546,8 @@ def download_api_via_ftp
   # At one point, we allowed the gem build to just find the most recent p4api build.
   # P4Ruby probably shouldn't do that by default.
   #version_dir = find_latest_version_dir(ftp)
-  version_dir = P4API_VERSION_DIR
 
-  dir = ftp_download_dir(version_dir)
+  dir = ftp_download_dir(p4api_version_dir)
   ftp.chdir(dir)
 
   puts "downloading #{filename} from #{dir} on ftp.perforce.com"
@@ -537,9 +582,11 @@ set_platform_opts
 # based solely on platform detection.
 set_platform_cppflags
 set_platform_cflags
+set_platform_cxxflags
 
 puts "$CPPFLAGS #{$CPPFLAGS}"
 puts "$CFLAGS #{$CFLAGS}"
+puts "$CXXFLAGS #{$CXXFLAGS}"
 
 # Setup additional system library definitions based on platform type before
 # we setup other libraries, in order to preserve linking order
@@ -556,14 +603,11 @@ resolve_ssl_dirs
 if RbConfig::CONFIG['target_os'].downcase =~ /mingw/
   have_library('gdi32') or raise
   have_library('ole32') or raise
+  have_library('crypt32') or raise
 end
 
-do_ssl = have_library('crypto') and have_library('ssl')
-
-unless do_ssl
-  have_library('p4sslstub') or raise
-end
-
+have_library('crypto') or raise
+have_library('ssl') or raise
 have_library('supp') or raise
 have_library('p4script_sqlite') or raise
 have_library('p4script_curl') or raise

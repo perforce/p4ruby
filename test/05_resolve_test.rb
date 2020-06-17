@@ -35,6 +35,7 @@ class TC_Resolve < Test::Unit::TestCase
   end
 
   def test_resolve
+    puts "05 - Resolve test"
     assert(p4, "Failed to create Perforce client")
 
     begin

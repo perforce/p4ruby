@@ -15,7 +15,7 @@ GEM_SPEC = Gem::Specification.new { |t|
   t.description = t.summary + '.'
   t.author = 'Perforce Software, Inc.'
   t.email = 'support@perforce.com'
-  t.homepage = 'https://swarm.workshop.perforce.com/projects/perforce-software-p4ruby/'
+  t.homepage = 'https://github.com/perforce/p4ruby'
   t.extensions = ['ext/P4/extconf.rb']
   t.licenses = ['MIT']
 
@@ -24,6 +24,8 @@ GEM_SPEC = Gem::Specification.new { |t|
   t.files += Dir.glob('ext/**/*.h')
   t.files += Dir.glob('lib/**/*.rb')
   t.files += Dir.glob('p4-bin/**/p4api.*')
+  t.files += Dir.glob('lib/**/P4.so*')
+  t.metadata = { "documentation_uri" => "https://www.perforce.com/manuals/p4ruby/Content/P4Ruby/Home-p4ruby.html" }
 }
 
 begin

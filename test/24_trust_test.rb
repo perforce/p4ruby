@@ -98,6 +98,7 @@ class TC_Trust < Test::Unit::TestCase
 
   def test_trust_file
     begin
+      puts "24 - Trust test"
       assert( p4, "Failed to create Perforce client" )
 
       # set a custom trust file
@@ -107,19 +108,17 @@ class TC_Trust < Test::Unit::TestCase
 
       # verify that we get a "you need to accept" when connecting
       begin
-        begin 
+        begin
           File.stat(trust_file)
           assert(false)
-        rescue Exception => e
-          # puts "correct exception: " + e.to_s
+        rescue Exception
         end
 
         p4.connect
         # puts "connected"
         p4.run_info
         assert(false)
-      rescue P4Exception => e
-        # puts "exception" + e.to_s
+      rescue P4Exception
       ensure
         p4.disconnect
       end
@@ -134,7 +133,6 @@ class TC_Trust < Test::Unit::TestCase
         # final is to just run a command and see that it succeeds
         p4.run_info
       rescue
-        # puts "exception" + e.to_s
         assert(false)
       ensure
         p4.disconnect
@@ -152,8 +150,7 @@ class TC_Trust < Test::Unit::TestCase
         # puts "connected"
         p4.run_info
         assert(false)
-      rescue P4Exception => e
-        # puts "exception" + e.to_s
+      rescue P4Exception
       ensure
         p4.disconnect
       end
@@ -165,8 +162,7 @@ class TC_Trust < Test::Unit::TestCase
         # verify that our file has the fingerprint
         # easier is to just run a command and see that it succeeds
         p4.run_info
-      rescue P4Exception => e
-        # puts "exception" + e.to_s
+      rescue P4Exception
         assert(false)
       ensure
         p4.disconnect

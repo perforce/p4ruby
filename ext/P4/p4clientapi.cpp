@@ -323,6 +323,9 @@ P4ClientApi::Disconnect()
     // Clear the specdef cache.
     specMgr.Reset();
 
+    // Clear out any results from the last command
+    ui.Reset();
+
     return Qtrue;
 }
 
@@ -424,12 +427,6 @@ P4ClientApi::IsIgnored( const char *path )
 
     StrRef p( path );
     return ignore->Reject( p, client.GetIgnoreFile() );
-}
-
-VALUE
-P4ClientApi::Reset()
-{
-    ui.Reset();
 }
 
 //
@@ -763,4 +760,3 @@ P4ClientApi::Except( const char *func, Error *e )
     e->Fmt( &m );
     Except( func, m.Text() );
 }
-

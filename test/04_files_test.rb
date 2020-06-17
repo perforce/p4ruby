@@ -1,29 +1,29 @@
 # vim:ts=2:sw=2:et:
 #-------------------------------------------------------------------------------
-# Copyright (c) 1997-2007, Perforce Software, Inc.  All rights reserved. 
-#  
-# Redistribution and use in source and binary forms, with or without 
-# modification, are permitted provided that the following conditions are met: 
-#  
-# 1.  Redistributions of source code must retain the above copyright 
-#     notice, this list of conditions and the following disclaimer. 
-#  
-# 2.  Redistributions in binary form must reproduce the above copyright 
-#     notice, this list of conditions and the following disclaimer in the 
-#     documentation and/or other materials provided with the distribution. 
-#  
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS  
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS  
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL PERFORCE  
-# SOFTWARE, INC. BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,  
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON  
-# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR  
-# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF  
-# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH  
-# DAMAGE. 
+# Copyright (c) 1997-2007, Perforce Software, Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL PERFORCE
+# SOFTWARE, INC. BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE.
 #-------------------------------------------------------------------------------
 
 class TC_Files < Test::Unit::TestCase
@@ -35,6 +35,7 @@ class TC_Files < Test::Unit::TestCase
   end
 
   def test_add_files
+    puts "04 - Add files test"
     assert( p4, "Failed to create Perforce client" )
     begin
       assert( p4.connect, "Failed to connect to Perforce server" )
@@ -70,7 +71,7 @@ class TC_Files < Test::Unit::TestCase
       assert_submit( "Failed to submit edits", change )
       assert( p4.run_opened.length == 0 )
 
-      # Now delete the test_files 
+      # Now delete the test_files
       assert( p4.run_delete( 'test_files/...' ) )
       change = p4.fetch_change
       change._description = "Delete the test files"
@@ -118,7 +119,7 @@ class TC_Files < Test::Unit::TestCase
       assert( rev.integrations[ 0 ].how == "branch into" )
       assert( rev.integrations[ 0 ].file == "//depot/test_branch/bar.txt" )
 
-      # Revision #3 is a delete, so it should not have a digest 
+      # Revision #3 is a delete, so it should not have a digest
       rev = df.revisions[ 1 ]
       assert( rev.rev == 3 )
       assert( rev.action == "delete" )

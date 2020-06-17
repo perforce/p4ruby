@@ -64,22 +64,6 @@ struct defaultspec {
         "View;code:311;type:wlist;words:2;len:64;;"
     },
     {
-        "changeX",
-        "Change;code:201;rq;ro;fmt:L;seq:1;len:10;;"
-        "Date;code:202;type:date;ro;fmt:R;seq:3;len:20;;"
-        "Client;code:203;ro;fmt:L;seq:2;len:32;;"
-        "User;code:204;ro;fmt:L;seq:4;len:32;;"
-        "Status;code:205;ro;fmt:R;seq:5;len:10;;"
-        "Type;code:211;seq:6;type:select;fmt:L;len:10;"
-            "val:public/restricted;;"
-        "ImportedBy;code:212;type:line;ro;fmt:L;len:32;;"
-        "Identity;code:213;type:line;;"
-        "Description;code:206;type:text;rq;;"
-        "Jobs;code:209;type:wlist;words:2;len:32;;"
-        "Stream;code:214;type:line;len:64;;"
-        "Files;code:210;type:llist;len:64;;"
-    },
-    {
         "change",
         "Change;code:201;rq;ro;fmt:L;seq:1;len:10;;"
         "Date;code:202;type:date;ro;fmt:R;seq:3;len:20;;"
@@ -124,42 +108,6 @@ struct defaultspec {
         "ChangeView;code:317;type:llist;len:64;;"
     },
     {
-        "clientX",
-        "Client;code:301;rq;ro;seq:1;len:32;;"
-        "Update;code:302;type:date;ro;seq:2;fmt:L;len:20;;"
-        "Access;code:303;type:date;ro;seq:4;fmt:L;len:20;;"
-        "Owner;code:304;seq:3;fmt:R;len:32;;"
-        "Host;code:305;seq:5;fmt:R;len:32;;"
-        "Description;code:306;type:text;len:128;;"
-        "Root;code:307;rq;type:line;len:64;;"
-        "AltRoots;code:308;type:llist;len:64;;"
-        "Options;code:309;type:line;len:64;val:"
-            "noallwrite/allwrite,noclobber/clobber,nocompress/compress,"
-            "unlocked/locked,nomodtime/modtime,normdir/rmdir;;"
-        "SubmitOptions;code:313;type:select;fmt:L;len:25;val:"
-            "submitunchanged/submitunchanged+reopen/revertunchanged/"
-            "revertunchanged+reopen/leaveunchanged/leaveunchanged+reopen;;"
-        "LineEnd;code:310;type:select;fmt:L;len:12;val:"
-            "local/unix/mac/win/share;;"
-        "View;code:311;type:wlist;words:2;len:64;;"
-    },
-    {
-        "clientSpecing021",
-        "Client;code:301;rq;ro;len:32;;"
-        "Update;code:302;type:date;ro;len:20;;"
-        "Access;code:303;type:date;ro;len:20;;"
-        "Owner;code:304;len:32;;"
-        "Host;code:305;len:32;;"
-        "Description;code:306;type:text;len:128;;"
-        "Root;code:307;rq;type:line;len:64;;"
-        "AltRoots;code:308;type:text;len:64;;"
-        "Options;code:309;type:line;len:64;val:"
-            "noallwrite/allwrite,noclobber/clobber,nocompress/compress,"
-            "unlocked/locked,nomodtime/modtime,normdir/rmdir;;"
-        "LineEnd;code:310;type:select;len:12;val:local/unix/mac/win/share;;"
-        "View;code:311;type:wlist;words:2;len:64;;"
-    },
-    {
         "depot",
         "Depot;code:251;rq;ro;len:32;;"
         "Owner;code:252;len:32;;"
@@ -171,40 +119,6 @@ struct defaultspec {
         "StreamDepth;code:260;len:64;;"
         "Map;code:257;rq;len:64;;"
         "SpecMap;code:259;type:wlist;len:64;;"
-    },
-    {
-        "extensionGbl",
-	"ExtName;code:901;type:line;opt:once;len:64;;"
-	"ExtDescription;code:902;type:text;opt:once;len:128;;"
-	"ExtVersion;code:903;type:line;opt:once;len:32;;"
-	"ExtUUID;code:904;type:line;opt:once;len:36;;"
-	"ExtRev;code:905;type:word;opt:once;len:20;;"
-	"ExtMaxScriptTime;code:913;type:word;len:12;;"
-	"ExtMaxScriptMem;code:914;type:word;len:12;;"
-	"ExtAllowedGroups;code:915;type:wlist;len:32;opt:default;;"
-	"ExtEnabled;code:916;type:word;opt:default;len:12;;"
-	"ExtP4USER;code:917;type:word;opt:default;len:12;;"
-	"Name;code:906;type:line;opt:default;len:32;;"
-	"Owner;code:907;type:word;opt:default;len:36;;"
-	"Update;code:908;type:date;opt:always;fmt:L;len:20;;"
-	"Description;code:909;type:text;opt:required;len:128;;"
-	"ExtConfig;code:912;type:text;opt:required;len:256;;"
-    },
-    {
-        "extensionIns",
-	"ExtName;code:901;type:line;opt:once;len:64;;"
-	"ExtDescription;code:902;type:text;opt:once;len:128;;"
-	"ExtVersion;code:903;type:line;opt:once;len:32;;"
-	"ExtUUID;code:904;type:line;opt:once;len:36;;"
-	"ExtRev;code:905;type:word;opt:once;len:20;;"
-	"ExtMaxScriptTime;code:913;type:word;len:12;;"
-	"ExtMaxScriptMem;code:914;type:word;len:12;;"
-	"ExtEnabled;code:916;type:word;opt:default;len:12;;"
-	"Name;code:906;type:line;opt:default;len:32;;"
-	"Owner;code:907;type:word;opt:default;len:36;;"
-	"Update;code:908;type:date;opt:always;fmt:L;len:20;;"
-	"Description;code:909;type:text;opt:required;len:128;;"
-	"ExtConfig;code:912;type:text;opt:required;len:256;;"
     },
     {
         "group",
@@ -321,6 +235,7 @@ struct defaultspec {
 	"DefaultBranch;code:1007;len:32;;"
 	"MirroredFrom;code:1008;len:32;;"
 	"Options;code:1009;type:select;len:10;val:lfs/nolfs;;"
+	"GconnMirrorServerId;code:1010;len:32;;"
     },
     {
         "server",
@@ -336,21 +251,11 @@ struct defaultspec {
 	"Description;code:757;type:text;len:128;;"
 	"User;code:761;type:line;len:64;;"
 	"AllowedAddresses;code:763;type:wlist;len:64;;"
+	"UpdateCachedRepos;code:766;type:wlist;len:64;;"
 	"ClientDataFilter;code:758;type:wlist;len:64;;"
 	"RevisionDataFilter;code:759;type:wlist;len:64;;"
 	"ArchiveDataFilter;code:760;type:wlist;len:64;;"
 	"DistributedConfig;code:762;type:text;len:128;;"
-    },
-    {
-        "specW",
-        "Fields;code:351;type:wlist;words:5;rq;;"
-        "Required;code:357;type:wlist;;"
-        "Readonly;code:358;type:wlist;;"
-        "Words;code:352;type:wlist;words:2;;"
-        "Formats;code:353;type:wlist;words:3;;"
-        "Values;code:354;type:wlist;words:2;;"
-        "Presets;code:355;type:wlist;words:2;;"
-        "Comments;code:356;type:text;;"
     },
     {
         "spec",

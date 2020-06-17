@@ -35,6 +35,7 @@ class TC_Enviro < Test::Unit::TestCase
   end
 
   def test_enviro
+    puts "02 - Enviroment test"
     assert(p4, 'Failed to create Perforce client')
 
     set_supported = !((RbConfig::CONFIG['target_os'].downcase =~ /mswin|mingw|darwin/).nil?)

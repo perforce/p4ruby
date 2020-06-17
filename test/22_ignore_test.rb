@@ -35,6 +35,7 @@ class TC_IgnoreFile < Test::Unit::TestCase
   end
 
   def test_ignore
+    puts "22 - Ignore test"
     assert( p4, "Failed to create Perforce client" )
     p4.ignore_file = '.p4ignore'
     assert_equal( '.p4ignore', p4.ignore_file, "Unexpected value for ignore file" )
@@ -42,4 +43,3 @@ class TC_IgnoreFile < Test::Unit::TestCase
   end
 
 end
-

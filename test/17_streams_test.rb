@@ -35,6 +35,7 @@ class TC_Streams < Test::Unit::TestCase
   end
 
   def test_streams
+    puts "17 - Streams test"
     assert( p4, "Failed to create Perforce client" )
 
     #	Create a streams depot

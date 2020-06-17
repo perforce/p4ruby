@@ -119,6 +119,7 @@ class TC_Progress < Test::Unit::TestCase
   end
 
   def test_progress
+    puts "21 - Progress test"
     assert( p4, "Failed to create Perforce client" )
     begin
       assert( p4.connect, "Failed to connect to Perforce server." )

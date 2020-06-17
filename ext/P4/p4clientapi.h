@@ -121,7 +121,6 @@ public:
     VALUE Connect();		// P4Exception on error
     VALUE Connected();		// Return true if connected and not dropped.
     VALUE Disconnect();
-    VALUE Reset();          // Clear out any results from the previous command
 
     // Executing commands.
     VALUE Run( const char *cmd, int argc, char * const *argv );
@@ -248,4 +247,3 @@ private:
     int			maxScanRows;
     int			maxLockTime;
 };
-

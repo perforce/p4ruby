@@ -42,6 +42,7 @@ class TC_GraphDepot < Test::Unit::TestCase
 
     #	Create a graph depot
     begin
+      puts "23 - Graph test"
       assert( p4.connect, "Failed to connect to Perforce server" )
       depot = p4.fetch_depot( "GD0" )
 

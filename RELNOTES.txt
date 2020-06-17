@@ -1,7 +1,7 @@
                            Release Notes for
                 P4Ruby, Perforce's script API for Ruby
 
-                            Version 2019.1
+                            Version 2020.1
 
 Introduction
 
@@ -35,54 +35,31 @@ Installing P4Ruby
 	locally, you likely can install P4Ruby without incident. On Windows,
 	precompiled gems will be made available.
 
-    The main command to install p4ruby is via gem or bundle. (On OS X, see
-    below.)
+	The main command to install p4ruby is via gem or bundle.
 
-        gem install p4ruby -- --with-p4api-dir=DIR
+	    gem install p4ruby
 
-    In this case, the DIR above is the path to the C++ API distribution that
-    should match the major and minor version of P4Ruby. If you omit the
-    --with-p4api-dir option, the gem will attempt to download a version of the
-    API itself from ftp.perforce.com.
+	Alternatively, you can use Bundler (http://bundler.io). In your Gemfile, 
+	specify
 
-    Alternatively, you can use Bundler (http://bundler.io). In your Gemfile,
-    specify
+	    gem 'p4ruby', '~> 2020.1'
 
-        gem 'p4ruby', '~> 2019.1'
+	And then execute:
 
-    And then execute:
-
-        bundle --with-p4api-dir=DIR
-
-Installing P4Ruby on OS X Default System Ruby
-
-    To install P4Ruby using the default system Ruby distribution (e.g., not
-    Ruby installed via RVM or ruby-build), you need to indicate the include
-    and lib directories:
-
-        gem install p4ruby -- --with-p4api-dir=DIR \
-           --with-p4-api-include=DIR/include \
-           --with-p4-api-lib=DIR/lib
-
-    The default system Ruby for OS X has bugs that do not correctly set up these
-    paths.
+	    bundle --with-p4api-dir=DIR
 
 --------------------------------------------------------------------------
 
-Building P4Ruby from Source 
+Building P4Ruby from Source
 
 	1. Download the Perforce C++ API from the Perforce FTP site at
 	   "ftp://ftp.perforce.com/perforce". The API archive is located
 	   in release and platform-specific subdirectories and is named
-	   "p4api.tgz". 
+	   "p4api-glibc2.3-openssl1.1.1.tgz" .
 
-	   IMPORTANT: Mac OS X users MUST use the 'darwin' variant
-	              of the Perforce API. Using the 'macos' variant
-	              does not work.
-	   
 	   Note: 32-bit builds of P4Ruby require a 32-bit version of the
 	         C++ API and a 32-bit version of Ruby. 64-bit builds of
-	         P4Ruby require a 64-bit version of the C++ API and a 
+	         P4Ruby require a 64-bit version of the C++ API and a
 	         64-bit version of Ruby.
 
 	   Unzip the archive into an empty directory.
@@ -96,7 +73,7 @@ Building P4Ruby from Source
 	4. Test your distribution, which relies on a locally installed p4d,
 	   easily made available via the p4util project:
 
-	    # This downloads a matching p4d executable and puts it into the 
+	    # This downloads a matching p4d executable and puts it into the
 	    # local path work/p4d. You can replace these commands if you already
 	    # have the p4d version you want to test against.
 	    gem install p4util
@@ -111,7 +88,7 @@ Building P4Ruby from Source
 
 	SSL support
 	-----------
-	
+
 	Perforce Server 2012.1 and later supports SSL connections and the
 	C++ API has been compiled with this support. For applications that
 	do not requireSSL support the C++ API provides a stub library
@@ -140,13 +117,13 @@ Compatibility Statements
 
 	API Compatibility
 
-	  The 2019.1 release of P4Ruby supports the 2019.1 Perforce API.
+	  The 2020.1 release of P4Ruby supports the 2020.1 Perforce API.
 	  Older releases might work but are not supported.
 
 	Ruby Compatibility
 
-	  The 2019.1 release of P4Ruby is supported by installing the gem
-	  with Ruby releases 2.3, 2.4, 2.5 and 2.6 with shared library
+	  The 2020.1 release of P4Ruby is supported by installing the gem
+	  with Ruby releases 2.5, 2.6 and 2.7 with shared library
 	  support.
 
 	  For detailed compatibility, please check the following table:
@@ -157,6 +134,10 @@ Compatibility Statements
 		     2.4     | 2017.1 or later
 		     2.5     | 2019.1 or later
 		     2.6     | 2019.1 or later
+		     2.7     | 2020.1 or later
+
+	  Support for Ruby release 2.5 was disabled on Windows as of the 
+	  P4Ruby 2020.1 release.
 
 	  It is recommended that you use a Ruby distribution that can deploy
 	  native gems easily, which, outside of Windows means obtaining a source
@@ -178,12 +159,12 @@ Compatibility Statements
 
 	  To build P4Ruby with encrypted communication support, you must
 	  use the version of OpenSSL that Perforce C/C++ API has been
-	  built against.  Running P4Ruby linked to an older library will 
+	  built against.  Running P4Ruby linked to an older library will
 	  fail with the error:
-	
+
 	    "SSL library must be at least version 1.0.1."
 
-	  The 2019.1 release of P4Ruby is supported with OpenSSL 1.1.1
+	  The 2020.1 release of P4Ruby is supported with OpenSSL 1.1.1
 
 	  For detailed compatibility, please check the following table:
 
@@ -193,20 +174,15 @@ Compatibility Statements
 		     2015.2                | 	1.0.1i+
 		     2017.1                |    1.0.2l+
 		     2019.1                |    1.1.1a+
+		     2020.1                |    1.1.1a+
 
 	Platform Compatibility
 
 	  While P4Ruby is generally portable, this release is certified
 	  only on the following platforms:
 
-        - RVM based installs for Ruby 2.3, 2.4, 2.5 and 2.6 on Ubuntu, CentOS, OS X.
-
-	  Note: As of 2012.1, a universal build of the Perforce C/C++
-		API is no longer available for Darwin. P4Ruby is now 
-		a 64-bit only library on Darwin and must be built with 
-		a 64-bit version of the Perforce C/C++ API for Darwin.
-		This has been tested with a universal build of Ruby and 
-		is known to work.
+        - RVM based installs for Ruby 2.5, 2.6 and 2.7 on Ubuntu and CentOS.
+        - rubyinstaller.org for Ruby 2.6 and 2.7 on Windows Server 2016/2019
 
 	Compiler Compatibility
 
@@ -214,13 +190,13 @@ Compatibility Statements
 	  has been compiled with the same compiler used to build the
 	  Perforce C++ API: for most platforms, use gcc/g++.
 
-	  Attempting to use a different compiler or a different version 
+	  Attempting to use a different compiler or a different version
 	  of the compiler causes linker errors due to differences in name
-	  handling between compilers. 
+	  handling between compilers.
 
 	Compatibility with Previous Releases
 
-	  Unless otherwise stated below, the 2019.1 release of P4Ruby is 
+	  Unless otherwise stated below, the 2020.1 release of P4Ruby is
 	  compatible with previous releases from Perforce Software.
 
 	Known Limitations
@@ -234,13 +210,13 @@ Compatibility Statements
 
 	Compatibility with P4Ruby from the Public Depot
 
-	  Perforce P4Ruby is significantly different from the P4Ruby in 
-	  the Perforce Public Depot. It contains several improvements and 
-	  interface changes intended to make P4Ruby consistent with the 
+	  Perforce P4Ruby is significantly different from the P4Ruby in
+	  the Perforce Public Depot. It contains several improvements and
+	  interface changes intended to make P4Ruby consistent with the
 	  other scripting interfaces, and with Ruby in general.
 
-	  If you are migrating from Public Depot P4Ruby, edit your 
-	  scripts to ensure that they comply with the new interface. 
+	  If you are migrating from Public Depot P4Ruby, edit your
+	  scripts to ensure that they comply with the new interface.
 	  The differences are detailed below.
 
 	Deleted Methods
@@ -251,7 +227,7 @@ Compatibility Statements
 	output			The output is returned by the run* methods
 	parse_forms		Form parsing is now always on
 	tagged			See tagged? and tagged= below.
-	
+
 	Public Depot P4Ruby also contained compatibility interfaces
 	for the following methods, all of which have been removed. In
 	these cases, the method on the right-hand side has also been in
@@ -268,8 +244,8 @@ Compatibility Statements
 	debug                   debug=
 	exception_level         exception_level=
 
-	NOTE: Some of these method names have been re-used as 
-	attribute readers (instead of writers). See the following 
+	NOTE: Some of these method names have been re-used as
+	attribute readers (instead of writers). See the following
 	list of new methods.
 
 	New Methods
@@ -292,15 +268,15 @@ Compatibility Statements
 	    version			Returns the version of the script
 	    version=		Sets the version of the script
 	    graph?			Returns true if graph depot commands are enabled
-        graph=			Enable or disable graph depot commands
+	    graph=			Enable or disable graph depot commands
 
 	Renamed Methods
 	---------------
-	In Public Depot P4Ruby, many methods were assigned names 
-	that end in a question mark (?), but the convention in 
-	Ruby is that only methods that return booleans have names 
-	ending with a question mark. Perforce P4Ruby follows this 
-	convention, so the following methods in Public Depot 
+	In Public Depot P4Ruby, many methods were assigned names
+	that end in a question mark (?), but the convention in
+	Ruby is that only methods that return booleans have names
+	ending with a question mark. Perforce P4Ruby follows this
+	convention, so the following methods in Public Depot
 	P4Ruby have been renamed according to the table below:
 
 	    Public Depot Method		Perforce P4Ruby Method
@@ -327,7 +303,7 @@ Compatibility Statements
 	In Public Depot P4Ruby, tagged output and form parsing mode were
 	off by default, but most scripts turned them on immediately. In
 	Perforce P4Ruby, both form parsing and tagged output are on by
-	default. 
+	default.
 
 	Form parsing cannot be explicitly disabled, but tagged output can
 	be turned on and off by setting p4.tagged as follows:
@@ -347,13 +323,40 @@ Key to symbols used in change notes below.
 	*** -- requires new p4d server program
 
 --------------------------------------------------------------------------
+New functionality in 2020.1
+
+	#1966018 (Bug #102615) * **
+		Added support for Ruby 2.7.
+
+	#1956729 (Bug #102178) * ** ***
+		Updated the stored spec templates to match the 2020.1 Helix Server
+		specs.
+
+	#1950587 (Bug #101453) * **
+		Added detection of OpenSSL version during gem install, for fetching
+		correct P4API from Perforce FTP site.
+
+Bugs fixed in 2020.1
+
+	#1948116 (Bug #101594) * **
+		Fixed compilation error for P4Ruby on Ubuntu 16.04.
+
+	#1958940 (Bug #101595) * **
+		Fixed issue when calling reset on Centos8 build would crash p4ruby.
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
 New functionality in 2019.1
 
 	#1863109 (Bug #100275) **
 		Added support for ruby 2.5 & 2.6.
-		
+
     #1849815 (Bug #100274) ***
         The 2019.1 release of P4Ruby supports the 2019.1 Perforce API.
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
 
 New functionality in 2017.1
 
@@ -366,6 +369,9 @@ New functionality in 2017.1
 
     # (SIR#92235 / P4RUBY-204)
         Support graph depot commands
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
 
 Issues addressed in 2015.2.1313860
 
@@ -380,6 +386,9 @@ New functionality in 2015.2
         Until this point, the only source gems have been available. These gems
         will allow Windows users for 32 or 64-bit Ruby 2.0, 2.1 or 2.2 to easily
         install P4Ruby.
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
 
 New functionality in 2014.2
 
@@ -429,7 +438,7 @@ Bugs fixed in 2014.2.0.pre3
 
 	* (BUG#75096 / P4RUBY-168)
 		Spec mappings updated to 14.2 definitions.
- 
+
     * (TASK#76795 / P4RUBY-176)
         Configuring pre-compiled gems for Linux and OS X, for supported
         Ruby versions (2.0, 2.1, 2.2).
@@ -440,6 +449,9 @@ Bugs fixed in 2014.2.0.pre2
 		`gem install` fails using source gem distribution inside of a Docker
 		environment due to passive FTP mode not enabled early enough.
 
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
 New functionality in 2014.1
 
 	# 807216 (SIR#70070) * ***
@@ -449,7 +461,7 @@ New functionality in 2014.1
 
 			P4#ignore_file		- Report current file
 			P4#ignore_file=		- Set ignore file
-			P4#ignored?( <file> )	- Test if <file> is 
+			P4#ignored?( <file> )	- Test if <file> is
 						  ignored
 
 	# 807216, 750979 (SIR#70093) *
@@ -460,7 +472,10 @@ Bugs fixed in 2013.1
 	#733921 (Bug#63887) *
 		P4Ruby no longer crashes when an exception is raised from
 		the block passed to P4#run_resolve.
-		
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
 New functionality in 2012.2
 
 	#525301 (Bug #59803) *
@@ -468,7 +483,7 @@ New functionality in 2012.2
 
 	#509253 (Bug #56480) *
 		Added P4#run_tickets() method to list local tickets.
-		Note that P4.run('tickets') still gives the old error 
+		Note that P4.run('tickets') still gives the old error
 		message "Must upgrade to 2004.2 p4 to access tickets."
 
 	#505980 (Bug #56514) * ** ***
@@ -477,24 +492,24 @@ New functionality in 2012.2
 		instance of P4::Progress class or subclass. Progress
 		information is currently only supported for submits and
 		'sync -q'. Details can be found in the documentation.
-	
+
 	#499586 (Bug #56520) *
 		New convenience method P4#each_<specs>() that allows
-		easy iteration through some or all spec objects such as 
+		easy iteration through some or all spec objects such as
 		clients or changes. Details can be found in the documentation.
 
 Bugs fixed in 2012.2
 
 	#525097 (Bug #59786) *
 	    Building P4Ruby with MinGW could generate the link error.
-	    
+
 	        g++: unrecognized option '-static-libstdc++'
-	        
+
 	    This has been fixed.
 
 	#505548 (Bug #58649) *
-	    P4#parse_client could raise the exception "Unknown field name 
-	    'StreamAtChange'." when parsing a stream client workspace.  
+	    P4#parse_client could raise the exception "Unknown field name
+	    'StreamAtChange'." when parsing a stream client workspace.
 	    Internal spec definition has been updated to resolve this.
 
 --------------------------------------------------------------------------
@@ -507,34 +522,34 @@ New functionality in 2012.1
 	    Instructions on how to compile with SSL support can be found
 	    at the top of this document under "Building P4Ruby from Source"
 	    and in the documentation.
-	    
+
 	    P4.identify will report the version of the OpenSSL library
 	    used to build the Perforce C++ API (not the version P4Ruby
 	    is linked against).
-	
+
 	 #415643 *
 	    P4Ruby will now only build a 64-bit version of the library
 	    on Darwin.
 
 	#413362 (Bug #51899) * **
-	    Enable "action resolve" to support resolves of branches, 
+	    Enable "action resolve" to support resolves of branches,
 	    deletes and file types. The existing P4::MergeData class
-	    has been extended and the additional attributes will be 
-	    populated for an 'action resolve'.  Details of the 
+	    has been extended and the additional attributes will be
+	    populated for an 'action resolve'.  Details of the
 	    additional attributes can be found in the documentation.
 
 Bugs fixed in 2012.1
 
 	#420839 (Bug #52952) *
-	    Accessing the base_name attribute of a P4::MergeData 
-	    object resulted in a segmentation fault when resolving 
+	    Accessing the base_name attribute of a P4::MergeData
+	    object resulted in a segmentation fault when resolving
 	    binary files.  This has now been fixed and all empty
 	    fields will return Nil.
-	
-	#410916	    
+
+	#410916
 	#410702 (Bug #52320) *
-	    Exceptions thrown during P4.run_resolve are now raised 
-	    up to the user.  If an exception is encountered during the 
+	    Exceptions thrown during P4.run_resolve are now raised
+	    up to the user.  If an exception is encountered during the
 	    block's execution, P4Ruby will skip the remaining files.
 
 --------------------------------------------------------------------------
@@ -543,12 +558,12 @@ Bugs fixed in 2012.1
 New functionality in 2011.1
 
 	#405913 *
-	    New method P4#messages() returns all messages from the 
+	    New method P4#messages() returns all messages from the
 	    server as objects. Script writers can test the severity
 	    of the messages to know if they are output messages (E_INFO),
 	    warnings (E_WARN), or errors (E_FAILED/E_FATAL).
 
-	    P4#errors() and P4#warnings still return the errors and 
+	    P4#errors() and P4#warnings still return the errors and
 	    warnings as strings for backwards compatibility.
 
 	    P4::Message objects have the following methods:
@@ -562,8 +577,8 @@ New functionality in 2011.1
 		  E_WARN	# something not good happened
 		  E_FAILED	# user did something wrong
 		  E_FATAL	# system broken -- nothing can continue
-  
-		P4::Message#generic	- Returns the generic class of 
+
+		P4::Message#generic	- Returns the generic class of
 					  the error, which may be one
 					  of the following values:
 
@@ -601,24 +616,24 @@ New functionality in 2011.1
 
 	#333292 (Bug #36121) *
 	    P4Ruby now supports Ruby 1.9
-    
+
 	#331384 *
 	    P4Ruby can now be compiled with the Mingw compiler using
 	    the MinGW P4Api build.
-    
+
 	#328203 (Bug #45861) * **
 	    Enable streams in P4Ruby by default. With this change,
 	    streams specific specs such as streams depots are listed.
 	    Disable the listing of streams specific specs by either
 	    setting the api_level to a value below 70 or by disabling
 	    stream handling explicitly through the P4.streams attribute:
-        
+
               p4.streams = false
-    
+
 	#322353 (Bug #42250) *
 	    P4Ruby supports a callback interface by providing a
-	    P4#handler attribute. Set P4#handler to an instance of a 
-	    subclass of P4::OutputHandler to enable callbacks. 
+	    P4#handler attribute. Set P4#handler to an instance of a
+	    subclass of P4::OutputHandler to enable callbacks.
 	    When a handler is defined, P4Ruby will invoke the handler
 	    for every response it receives from the Perforce Server
 	    immediately instead of collecting all results together in
@@ -633,7 +648,7 @@ Bugs fixed in 2011.1
 	    cause an exception in Ruby. This is now fixed.
 	    There is still an oddity when p4.track = 1 and a user runs
 	    p4.run_print() on a file that only has lines starting with
-	    '--- '. In that case, the output of the print is lost. 
+	    '--- '. In that case, the output of the print is lost.
 	    Disable tracking by setting p4.track = 0 (the default) will
 	    solve this problem.
 
@@ -652,19 +667,19 @@ Bugs fixed in 2011.1
 	#338437 (Bug #39580) *
 	    P4#identify() reports the platform on AMD64 as X86_64
 	    in line with all other Perforce products.
-        
+
 	#332453 *
 	    Updated the stored spec templates for client, change, group,
 	    spec and user.  Added spec template for new spec type
 	    streams. These are required, for example, for form-triggers
 	    that do not connect to the server first.
-              
+
 	#329351 (Bug #41271) *
 	    Include 'extraTag' fields in P4::Spec objects
-    
+
 	#328578 (Bug #39264) *
 	    P4#identify() now reports P4Ruby as P4RUBY in line with all
-	    other Perforce products.  It will also include the build 
+	    other Perforce products.  It will also include the build
 	    number of the Perforce C/C++ API that it is built with.
 
 --------------------------------------------------------------------------
@@ -680,12 +695,12 @@ New functionality in 2010.2
 	#255945 *
 	#255949 *
 	#269012 *
-	    New method P4#messages() returns all messages from the 
+	    New method P4#messages() returns all messages from the
 	    server as objects. Script writers can test the severity
 	    of the messages to know if they are output messages (E_INFO),
 	    warnings (E_WARN), or errors (E_FAILED/E_FATAL).
 
-	    P4#errors() and P4#warnings still return the errors and 
+	    P4#errors() and P4#warnings still return the errors and
 	    warnings as strings for backwards compatibility.
 
 	    P4::Message objects have the following methods:
@@ -699,8 +714,8 @@ New functionality in 2010.2
 		  E_WARN	# something not good happened
 		  E_FAILED	# user did something wrong
 		  E_FATAL	# system broken -- nothing can continue
-  
-		P4::Message#generic	- Returns the generic class of 
+
+		P4::Message#generic	- Returns the generic class of
 					  the error, which may be one
 					  of the following values:
 
@@ -734,7 +749,7 @@ Bugs fixed in 2010.2
 		cause an exception in Ruby. This is now fixed.
 		There is still an oddity when p4.track = 1 and a user runs
 		p4.run_print() on a file that only has lines starting with
-		'--- '. In that case, the output of the print is lost. 
+		'--- '. In that case, the output of the print is lost.
 		Disable tracking by setting p4.track = 0 (the default) will
 		solve this problem.
 
@@ -761,7 +776,7 @@ New functionality in 2010.1
 	#230191 *
 	     Added new P4#server_unicode? method that allows script
 	     writers to test whether or not a Perforce Server is in
-	     internationalized (unicode) mode. At least one Perforce 
+	     internationalized (unicode) mode. At least one Perforce
 	     command must have been executed against the server before
 	     this method can be called.
 
@@ -780,7 +795,7 @@ Bugs fixed in 2010.1
 New functionality in 2009.2
 
 	#214454 (Bug #32916) *
-	    P4#port= now raises a P4Exception if called after P4#connect(). 
+	    P4#port= now raises a P4Exception if called after P4#connect().
 
 	#214449 (Bug #35416) *
 	    Added a P4#server_case_sensitive? method that enables scripts
@@ -806,7 +821,7 @@ New functionality in 2009.1
 	#191900 (Bug #26729) *
 	    A new method:
 
-	        P4#tagged( aBool ) { block } 
+	        P4#tagged( aBool ) { block }
 
 	    has been added to the P4 class. This method temporarily
 	    toggles the use of tagged output for the duration of
@@ -816,7 +831,7 @@ Bugs fixed in 2009.1
 
 	#191889 (Bug #29911) *
 	    Calling P4#run_resolve() or P4#run( 'resolve' ) without
-	    a block or a previous call to P4#input no longer causes an 
+	    a block or a previous call to P4#input no longer causes an
 	    infinite loop.
 
 	#191623,191627 (Bug #32918) *
@@ -835,7 +850,7 @@ New functionality in 2008.2
 	    a connection to a server. Methods in the P4::Map class are:
 
 		P4::Map.new	    Constructor
-		P4::Map.join	    Join two maps to create a third	
+		P4::Map.join	    Join two maps to create a third
 		P4::Map#clear	    Empty a map
 		P4::Map#count	    Return the number of entries
 		P4::Map#empty?	    Tests whether a map object is empty
@@ -860,12 +875,12 @@ Bugs fixed in 2008.2
 New functionality in 2008.1
 
 	#152356 (Bug #29022) *
-	    A new method 'P4#env( var )' method has been added to 
-	    the P4 class. This instance method enables the caller 
-	    to interrogate the Perforce environment, including 
-	    reading Perforce variables from P4CONFIG files and, 
-	    on Windows, the registry. P4#cwd= now loads any 
-	    P4CONFIG file settings that are appropriate to the 
+	    A new method 'P4#env( var )' method has been added to
+	    the P4 class. This instance method enables the caller
+	    to interrogate the Perforce environment, including
+	    reading Perforce variables from P4CONFIG files and,
+	    on Windows, the registry. P4#cwd= now loads any
+	    P4CONFIG file settings that are appropriate to the
 	    new working directory.
 
 	#153005 (Bug #29308) *
@@ -880,15 +895,15 @@ Bugs fixed in 2007.3
 	    The Makefile generated on some Linux platforms (notably
 	    Ubuntu 7.10) was not correct, and attempted to link P4Ruby
 	    using 'cc' instead of 'c++', causing an 'undefined symbol'
-	    error (typically '_ZTVN10__cxxabiv120__si_class_type_infoE') , 
+	    error (typically '_ZTVN10__cxxabiv120__si_class_type_infoE') ,
 	    when attempting to use P4Ruby. This problem has been corrected.
 
 	#150577 (Bug #28704) *
-	    The presence of deleted revisions in a file's history 
-	    might lead to incorrect fileSize and digest 
-	    attributes for other revisions in the output of 
+	    The presence of deleted revisions in a file's history
+	    might lead to incorrect fileSize and digest
+	    attributes for other revisions in the output of
 	    P4#run_filelog. This problem has been corrected.
 
 	#150576 (Bug #28773) *
-	    P4::Revision#filesize() always returned nil. This 
+	    P4::Revision#filesize() always returned nil. This
 	    problem has been corrected.

@@ -35,6 +35,7 @@ class TC_Output < Test::Unit::TestCase
   end
 
   def test_new_output
+    puts "14 - Output test"
     assert( p4, "Failed to create Perforce client" )
     begin
       # First test new output format
@@ -87,17 +88,7 @@ class TC_Output < Test::Unit::TestCase
       assert_equal(0, warns.length, "Wrong number of warnings" )
       assert_equal(0, errs.length, "Wrong number of errors" )
 
-      # test the reset (resets the received output)
-      p4.reset
-      infos = p4.messages.select { |m| m.severity == P4::E_INFO }
-      warns = p4.messages.select { |m| m.severity == P4::E_WARN }
-      errs  = p4.messages.select { |m| m.severity >= P4::E_FAILED }
-      assert_equal(0, infos.length, "Wrong number of info messages")
-      assert_equal(0, warns.length, "Wrong number of warnings" )
-      assert_equal(0, errs.length, "Wrong number of errors" )
-
       # test getting an error's dictionary (hash)
-      p4.reset
       p4.run_dirs('//this/is/a/path/that/does/not/exist/*')
       errs  = p4.messages.select { |m| m.severity >= P4::E_FAILED }
       assert_equal(1, errs.length, "Wrong number of errors" )

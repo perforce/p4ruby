@@ -71,6 +71,7 @@ module P4RubyTest
     Dir.chdir(client_root)
     ENV.delete('PWD')
     init_client
+    #p4.debug = 1
   end
 
   #
