@@ -425,6 +425,8 @@ def p4_cpu(os)
     when :darwin, :linux
       if cpu =~ /i686/
         'x86'
+      elsif cpu =~ /universal/
+        'x86_64'
       else
         cpu
       end
@@ -451,7 +453,9 @@ def p4_platform_label
       else
         'mingwx86'
       end
-    when /darwin/
+    when /darwin19|darwin[2-9][0-9]/
+      "macosx1015#{p4_cpu(:darwin)}"
+    when /darwin/      
       "darwin90#{p4_cpu(:darwin)}"
     when /solaris/
       "solaris10#{p4_cpu(:solaris)}"
@@ -484,6 +488,8 @@ def filename
                 filename = 'p4api-openssl1.0.2.zip'
              end
     end
+  elsif RbConfig::CONFIG['target_os'].downcase =~ /darwin19|darwin[2-9][0-9]/
+    filename = 'p4api-openssl1.1.1.tgz'
   else
     filename = 'p4api.tgz'
     if !openssl_number.to_s.empty?

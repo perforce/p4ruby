@@ -106,3 +106,32 @@ SpecDataRuby::SetLine( SpecElem *sd, int x, const StrPtr *v, Error *e )
 	}
 	return;
 }
+
+void
+SpecDataRuby::Comment ( SpecElem *sd, int x, const char **wv,  int nl, Error *e )
+{
+	VALUE 	key;
+	VALUE	val;
+	VALUE	ary;
+	StrBuf	t;
+
+	key = P4Utils::ruby_string( sd->tag.Text(), sd->tag.Length() );
+	val = P4Utils::ruby_string( *wv );
+
+	if( sd->IsList() )
+	{
+
+	    ary = rb_hash_aref( hash, key ); // rb_hash_aref  - get the value for hash key
+	    if( ary == Qnil )
+	    {
+		ary = rb_ary_new();
+		rb_hash_aset( hash, key, ary ); // rb_hash_aset(hash, key, value) - set the hash key to value
+	    }
+	    rb_ary_store( ary, x, val );
+	}
+	else
+	{ 
+	    rb_hash_aset( hash, key, val );
+	}
+	return;
+}

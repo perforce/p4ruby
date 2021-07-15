@@ -77,11 +77,16 @@ class TC_Streams < Test::Unit::TestCase
         # an 'extraTag' field (such as 'firmerThanParent' exists, and save
         # the spec
         s = p4.fetch_stream( "//Stream/MAIN" )
+        s[ 'Paths' ][0] = "share ... ## Inline comment"
+        s[ 'Paths' ][1] = "## Newline comment"
         assert(s.has_key?("firmerThanParent"), "'extraTag' field missing from spec." )
         s[ 'Type' ] = "mainline"
         o = p4.save_stream( s )
         assert( o.length == 1, "Unexpected output when creating a stream" )
         assert( o[0] =~ /saved/, "Failed to create a stream" )
+        n = p4.fetch_stream( "//Stream/MAIN" )
+        assert( n[ 'Paths' ][0], "share ... ## Inline comment" )
+        assert( n[ 'Paths' ][1], "## Newline comment" )
       else
         puts "\tTest Skipped: Streams requires a 2011.1 or later Perforce Server and P4API."
       end

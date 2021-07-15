@@ -38,6 +38,7 @@
 #include <ruby.h>
 #include "undefdups.h"
 #include <p4/clientapi.h>
+#include <p4/strtable.h>
 #include <p4/clientprog.h>
 #include <p4/spec.h>
 #include <p4/diff.h>
@@ -77,6 +78,7 @@ ClientUserRuby::ClientUserRuby(SpecMgr *s) {
 	rubyExcept = 0;
 	alive = 1;
 	track = false;
+    SetSSOHandler( ssoHandler = new P4ClientSSO( s ) );
 
 	ID idP4 = rb_intern("P4");
 	ID idP4OH = rb_intern("OutputHandler");
@@ -723,4 +725,157 @@ void ClientUserRuby::GCMark() {
 	rb_gc_mark( cProgress );
 
 	results.GCMark();
+	ssoHandler->GCMark();
+}
+
+//
+// SSO handler
+//
+
+P4ClientSSO::P4ClientSSO( SpecMgr *s )
+{
+    specMgr = s;
+    resultSet = 0;
+    ssoEnabled = 0;
+    result = Qnil;
+}
+
+ClientSSOStatus
+P4ClientSSO::Authorize( StrDict &vars, int maxLength, StrBuf &strbuf )
+{
+    ssoVars.Clear();
+
+    if( !ssoEnabled )
+        return CSS_SKIP;
+
+    if( ssoEnabled < 0 )
+        return CSS_UNSET;
+
+    if( resultSet )
+    {
+        strbuf.Clear();
+		VALUE resval = result;
+
+        //if( P4RDB_CALLS )
+        //    std::cerr << "[P4] ClientSSO::Authorize(). Using supplied input"
+        //              << std::endl;
+
+		if (Qtrue == rb_obj_is_kind_of(result, rb_cArray)) {
+			resval = rb_ary_shift(result);
+		}
+	
+		if( resval != Qnil ) {
+			// Convert whatever's left into a string
+			ID to_s = rb_intern("to_s");
+			VALUE str = rb_funcall(resval, to_s, 0);
+			strbuf.Set(StringValuePtr(str));
+		}
+
+        return resultSet == 2 ? CSS_FAIL
+                              : CSS_PASS;
+    }
+
+    ssoVars.CopyVars( vars );
+    return CSS_EXIT;
+}
+
+VALUE
+P4ClientSSO::EnableSSO( VALUE e )
+{
+    if( e == Qnil )
+    {
+        ssoEnabled = 0;
+        return Qtrue;
+    }
+
+    if( e == Qtrue )
+    {
+        ssoEnabled = 1;
+        return Qtrue;
+    }
+
+    if( e == Qfalse )
+    {
+        ssoEnabled = -1;
+        return Qtrue;
+    }
+
+	return Qfalse;
+}
+
+VALUE
+P4ClientSSO::SSOEnabled()
+{
+    if( ssoEnabled == 1 )
+    {
+        return Qtrue;
+    }
+    else if( ssoEnabled == -1 )
+    {
+        return Qfalse;
+    }
+    else
+    {
+        return Qnil;
+    }
+}
+
+VALUE
+P4ClientSSO::SetPassResult( VALUE i )
+{
+    resultSet = 1;
+    return SetResult( i );
+}
+
+VALUE
+P4ClientSSO::GetPassResult()
+{
+    if( resultSet == 1 )
+    {
+        return result;
+    }
+    else
+    {
+        return Qnil;
+    }
+}
+
+VALUE
+P4ClientSSO::SetFailResult( VALUE i )
+{
+    resultSet = 2;
+    return SetResult( i );
+}
+
+VALUE
+P4ClientSSO::GetFailResult()
+{
+    if( resultSet == 2 )
+    {
+        return result;
+    }
+    else
+    {
+        return Qnil;
+    }
+}
+
+VALUE
+P4ClientSSO::SetResult( VALUE i )
+{
+	//if (P4RDB_CALLS) fprintf(stderr, "[P4] P4ClientSSO::SetResult()\n");
+ 
+	result = i;
+	return Qtrue;
+}
+
+VALUE
+P4ClientSSO::GetSSOVars()
+{
+    return specMgr->StrDictToHash( &ssoVars );
+}
+
+void
+P4ClientSSO::GCMark() {
+	if (result != Qnil) rb_gc_mark( result );
 }

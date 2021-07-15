@@ -44,6 +44,8 @@ class SpecDataRuby : public SpecData
 	virtual StrPtr *GetLine( SpecElem *sd, int x, const char **cmt );
 	virtual void	SetLine( SpecElem *sd, int x, const StrPtr *val,
 				Error *e );
+	virtual void	Comment( SpecElem *sd, int x, const char **wv,
+	            int nl, Error *e );
 
     private:
 	VALUE	hash;

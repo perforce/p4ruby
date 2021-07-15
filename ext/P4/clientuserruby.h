@@ -42,6 +42,39 @@
 class SpecMgr;
 class ClientProgress;
 
+class P4ClientSSO : public ClientSSO
+{
+    public:
+        P4ClientSSO( SpecMgr *s );
+
+    // Client SSO methods overridden here
+    virtual ClientSSOStatus Authorize( StrDict &vars, int maxLength,
+                                       StrBuf &result );
+
+    // Local methods
+    VALUE EnableSSO( VALUE e );
+    VALUE SSOEnabled();
+    VALUE SetPassResult( VALUE i );
+    VALUE GetPassResult();
+    VALUE SetFailResult( VALUE i );
+    VALUE GetFailResult();
+    VALUE GetSSOVars();
+
+	void GCMark();
+
+    private:
+
+    VALUE SetResult( VALUE i );
+
+    int         ssoEnabled;
+    int         resultSet;
+
+    StrBufDict  ssoVars;
+    SpecMgr *   specMgr;
+
+    VALUE       result;
+};
+
 class ClientUserRuby: public ClientUser, public KeepAlive {
 public:
 	ClientUserRuby(SpecMgr *s);
@@ -101,6 +134,16 @@ public:
 		return progress;
 	}
 
+	// SSO handler support
+
+    VALUE EnableSSO( VALUE e )        { return ssoHandler->EnableSSO( e ); }
+    VALUE SSOEnabled()   { return ssoHandler->SSOEnabled(); }
+    VALUE SetSSOPassResult( VALUE i ) { return ssoHandler->SetPassResult( i ); }
+    VALUE GetSSOPassResult(){ return ssoHandler->GetPassResult();}
+    VALUE SetSSOFailResult( VALUE i ) { return ssoHandler->SetFailResult( i ); }
+    VALUE GetSSOFailResult(){ return ssoHandler->GetFailResult();}
+    VALUE GetSSOVars()  { return ssoHandler->GetSSOVars(); }
+
 	// override from KeepAlive
 	virtual int IsAlive() {
 		return alive;
@@ -129,5 +172,6 @@ private:
 	int alive;
 	int rubyExcept;
 	bool track;
+    P4ClientSSO * ssoHandler;
 };
 

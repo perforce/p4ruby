@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ruby.h>
 #include "undefdups.h"
 #include <p4/clientapi.h>
+#include <p4/strtable.h>
 #include <p4/i18napi.h>
 #include <p4/enviro.h>
 #include <p4/hostenv.h>
@@ -140,6 +141,21 @@ const StrPtr *
 P4ClientApi::GetEnviroFile()
 {
     return enviro->GetEnviroFile();
+}
+
+void
+P4ClientApi::SetEVar( const char *var, const char *val )
+{
+    StrRef sVar( var );
+    StrRef sVal( val );
+    client.SetEVar( sVar, sVal );
+}
+
+const StrPtr *
+P4ClientApi::GetEVar( const char *var )
+{
+    StrRef sVar( var );
+    return client.GetEVar( sVar );
 }
 
 void
@@ -759,4 +775,50 @@ P4ClientApi::Except( const char *func, Error *e )
 
     e->Fmt( &m );
     Except( func, m.Text() );
+}
+
+//
+// SSO Handlers
+//
+
+VALUE
+P4ClientApi::SetEnableSSO( VALUE e )
+{
+    return ui.EnableSSO( e );
+}
+
+VALUE
+P4ClientApi::GetEnableSSO()
+{
+    return ui.SSOEnabled();
+}
+
+VALUE
+P4ClientApi::GetSSOVars()
+{
+    return ui.GetSSOVars();
+}
+
+VALUE
+P4ClientApi::SetSSOPassResult( VALUE r )
+{
+    return ui.SetSSOPassResult( r );
+}
+
+VALUE
+P4ClientApi::GetSSOPassResult()
+{
+    return ui.GetSSOPassResult();
+}
+
+VALUE
+P4ClientApi::SetSSOFailResult( VALUE r )
+{
+   return ui.SetSSOFailResult( r );
+}
+
+VALUE
+P4ClientApi::GetSSOFailResult()
+{
+    return ui.GetSSOFailResult();
 }

@@ -314,6 +314,25 @@ static VALUE p4_set_enviro_file( VALUE self, VALUE rbstr )
     return Qtrue;
 }
 
+static VALUE p4_get_evar( VALUE self, VALUE var )
+{
+    P4ClientApi	*p4;
+    const StrPtr *val;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    val = p4->GetEVar( StringValuePtr( var ) );
+    if( !val ) return Qnil;
+
+    return P4Utils::ruby_string( val->Text() );
+}
+
+static VALUE p4_set_evar( VALUE self, VALUE var, VALUE val )
+{
+    P4ClientApi *p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    p4->SetEVar( StringValuePtr( var ), StringValuePtr( val ) );
+    return Qtrue;
+}
+
 static VALUE p4_get_host( VALUE self )
 {
     P4ClientApi	*p4;
@@ -642,7 +661,7 @@ static VALUE p4_run( VALUE self, VALUE args )
 
     // Allocate storage on the stack so it's automatically reclaimed
     // when we exit.
-    char **p4args = ALLOCA_N( char *, argc + 1 );
+    char **p4args = RB_ALLOC_N( char *, argc + 1 );
 
     // Copy the args across
     for ( i = 0; i < argc; i++ )
@@ -806,6 +825,58 @@ static VALUE p4_set_progress( VALUE self, VALUE progress )
     P4ClientApi	*p4;
     Data_Get_Struct( self, P4ClientApi, p4 );
     return p4->SetProgress( progress );
+}
+
+/*******************************************************************************
+ * SSO handler support
+ ******************************************************************************/
+static VALUE p4_get_enabled_sso( VALUE self )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->GetEnableSSO();
+}
+
+static VALUE p4_set_enable_sso( VALUE self, VALUE enable )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->SetEnableSSO( enable );
+}
+
+static VALUE p4_get_sso_vars( VALUE self )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->GetSSOVars();
+}
+
+static VALUE p4_get_sso_passresult( VALUE self )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->GetSSOPassResult();
+}
+
+static VALUE p4_set_sso_passresult( VALUE self, VALUE result )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->SetSSOPassResult( result );
+}
+
+static VALUE p4_get_sso_failresult( VALUE self )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->GetSSOFailResult();
+}
+
+static VALUE p4_set_sso_failresult( VALUE self, VALUE result )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->SetSSOFailResult( result );
 }
 
 /*******************************************************************************
@@ -1262,6 +1333,8 @@ void	Init_P4()
     rb_define_method( cP4, "set_env", 	RUBY_METHOD_FUNC(p4_set_env)     , 2 );
     rb_define_method( cP4, "enviro_file", RUBY_METHOD_FUNC(p4_get_enviro_file), 0);
     rb_define_method( cP4, "enviro_file=", RUBY_METHOD_FUNC(p4_set_enviro_file), 1);
+    rb_define_method( cP4, "evar", 	RUBY_METHOD_FUNC(p4_get_evar)     , 1 );
+    rb_define_method( cP4, "set_evar", 	RUBY_METHOD_FUNC(p4_set_evar)     , 2 );
     rb_define_method( cP4, "host", 	RUBY_METHOD_FUNC(p4_get_host)    , 0 );
     rb_define_method( cP4, "host=", 	RUBY_METHOD_FUNC(p4_set_host)    , 1 );
     rb_define_method( cP4, "ignore_file",RUBY_METHOD_FUNC(p4_get_ignore) , 0 );
@@ -1334,6 +1407,16 @@ void	Init_P4()
     // Support for Progress API
     rb_define_method( cP4, "progress", RUBY_METHOD_FUNC(p4_get_progress), 0);
     rb_define_method( cP4, "progress=", RUBY_METHOD_FUNC(p4_set_progress), 1);
+
+    // SSO handling
+    rb_define_method( cP4, "loginsso", RUBY_METHOD_FUNC(p4_get_enabled_sso), 0);
+    rb_define_method( cP4, "loginsso=", RUBY_METHOD_FUNC(p4_set_enable_sso), 1);
+    rb_define_method( cP4, "ssovars", RUBY_METHOD_FUNC(p4_get_sso_vars), 0);
+    rb_define_method( cP4, "ssopassresult", RUBY_METHOD_FUNC(p4_get_sso_passresult), 0);
+    rb_define_method( cP4, "ssopassresult=", RUBY_METHOD_FUNC(p4_set_sso_passresult), 1);
+    rb_define_method( cP4, "ssofailresult", RUBY_METHOD_FUNC(p4_get_sso_failresult), 0);
+    rb_define_method( cP4, "ssofailresult=", RUBY_METHOD_FUNC(p4_set_sso_failresult), 1);
+
 
     // P4::MergeData class
     cP4MD = rb_define_class_under( cP4, "MergeData", rb_cObject );

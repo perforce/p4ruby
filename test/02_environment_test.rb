@@ -61,5 +61,9 @@ class TC_Enviro < Test::Unit::TestCase
 
     p4.enviro_file = '/tmp/enviro_file'
     assert_equal(p4.enviro_file, '/tmp/enviro_file')
+
+    assert_equal(p4.evar('foo'), nil)
+    p4.set_evar('foo', 'bar')
+    assert_equal(p4.evar('foo'), 'bar')
   end
 end

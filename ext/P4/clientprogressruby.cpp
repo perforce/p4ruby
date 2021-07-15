@@ -56,7 +56,6 @@ ClientProgressRuby::ClientProgressRuby(VALUE prog, int t) {
 }
 
 ClientProgressRuby::~ClientProgressRuby() {
-	rb_gc_mark( progress );
 }
 
 void ClientProgressRuby::Description(const StrPtr *d, int u) {

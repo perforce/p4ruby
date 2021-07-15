@@ -73,6 +73,7 @@ public:
     void SetClient( const char *c )	{ client.SetClient( c );	}
     void SetCwd( const char *c );
     void SetEnviroFile( const char *c );
+    void SetEVar( const char *var, const char *val );
     void SetHost( const char *h )	{ client.SetHost( h );		}
     void SetIgnoreFile( const char *f )	{ client.SetIgnoreFile( f );	}
     void SetMaxResults( int v )		{ maxResults = v;		}
@@ -96,6 +97,7 @@ public:
     const StrPtr &GetCwd()		{ return client.GetCwd();	}
     const char * GetEnv( const char *v);
     const StrPtr *GetEnviroFile();
+    const StrPtr *GetEVar(const char *v);
     const StrPtr &GetHost()		{ return client.GetHost();	}
     const StrPtr &GetIgnoreFile()	{ return client.GetIgnoreFile();}
     const StrPtr &GetLanguage()		{ return client.GetLanguage();	}
@@ -168,6 +170,15 @@ public:
     //	Progress API support
     VALUE SetProgress( VALUE progress );
     VALUE GetProgress() { return ui.GetProgress(); }
+
+    // SSO handler
+    VALUE SetEnableSSO( VALUE e );
+    VALUE GetEnableSSO();
+    VALUE GetSSOVars();
+    VALUE SetSSOPassResult( VALUE r );
+    VALUE GetSSOPassResult();
+    VALUE SetSSOFailResult( VALUE r );
+    VALUE GetSSOFailResult();
 
     // Ruby garbage collection
     void  GCMark();
