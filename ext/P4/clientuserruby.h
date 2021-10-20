@@ -42,40 +42,7 @@
 class SpecMgr;
 class ClientProgress;
 
-class P4ClientSSO : public ClientSSO
-{
-    public:
-        P4ClientSSO( SpecMgr *s );
-
-    // Client SSO methods overridden here
-    virtual ClientSSOStatus Authorize( StrDict &vars, int maxLength,
-                                       StrBuf &result );
-
-    // Local methods
-    VALUE EnableSSO( VALUE e );
-    VALUE SSOEnabled();
-    VALUE SetPassResult( VALUE i );
-    VALUE GetPassResult();
-    VALUE SetFailResult( VALUE i );
-    VALUE GetFailResult();
-    VALUE GetSSOVars();
-
-	void GCMark();
-
-    private:
-
-    VALUE SetResult( VALUE i );
-
-    int         ssoEnabled;
-    int         resultSet;
-
-    StrBufDict  ssoVars;
-    SpecMgr *   specMgr;
-
-    VALUE       result;
-};
-
-class ClientUserRuby: public ClientUser, public KeepAlive {
+class ClientUserRuby: public ClientUser, public ClientSSO, public KeepAlive {
 public:
 	ClientUserRuby(SpecMgr *s);
 
@@ -136,13 +103,18 @@ public:
 
 	// SSO handler support
 
-    VALUE EnableSSO( VALUE e )        { return ssoHandler->EnableSSO( e ); }
-    VALUE SSOEnabled()   { return ssoHandler->SSOEnabled(); }
-    VALUE SetSSOPassResult( VALUE i ) { return ssoHandler->SetPassResult( i ); }
-    VALUE GetSSOPassResult(){ return ssoHandler->GetPassResult();}
-    VALUE SetSSOFailResult( VALUE i ) { return ssoHandler->SetFailResult( i ); }
-    VALUE GetSSOFailResult(){ return ssoHandler->GetFailResult();}
-    VALUE GetSSOVars()  { return ssoHandler->GetSSOVars(); }
+	virtual ClientSSOStatus Authorize( StrDict &vars, int maxLength, StrBuf &result );
+	VALUE EnableSSO( VALUE e );
+	VALUE SSOEnabled();
+	VALUE SetSSOPassResult( VALUE i );
+	VALUE GetSSOPassResult();
+	VALUE SetSSOFailResult( VALUE i );
+	VALUE GetSSOFailResult();
+	VALUE GetSSOVars();
+	VALUE SetRubySSOHandler( VALUE handler );
+	VALUE GetRubySSOHandler() {
+		return ssoHandler;
+	}
 
 	// override from KeepAlive
 	virtual int IsAlive() {
@@ -155,6 +127,8 @@ private:
 	void ProcessOutput(const char * method, VALUE data);
 	void ProcessMessage(Error * e);
 	bool CallOutputMethod(const char * method, VALUE data);
+	VALUE SetSSOResult( VALUE i );
+	ClientSSOStatus CallSSOMethod(VALUE vars, int maxLength, StrBuf &result);
 
 private:
 	StrBuf cmd;
@@ -167,11 +141,18 @@ private:
 	VALUE cOutputHandler;
 	VALUE progress;
 	VALUE cProgress;
+	VALUE cSSOHandler;
 	int debug;
 	int apiLevel;
 	int alive;
 	int rubyExcept;
 	bool track;
-    P4ClientSSO * ssoHandler;
+	
+	// SSO handler support
+	int         ssoEnabled;
+	int         ssoResultSet;
+	StrBufDict  ssoVars;
+	VALUE       ssoResult;
+	VALUE 	    ssoHandler;
 };
 

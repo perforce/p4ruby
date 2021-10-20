@@ -878,6 +878,20 @@ static VALUE p4_set_sso_failresult( VALUE self, VALUE result )
     Data_Get_Struct( self, P4ClientApi, p4 );
     return p4->SetSSOFailResult( result );
 }
+static VALUE p4_get_ssohandler( VALUE self )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    return p4->GetSSOHandler();
+}
+
+static VALUE p4_set_ssohandler( VALUE self, VALUE handler )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    p4->SetSSOHandler( handler );
+    return Qtrue;
+}
 
 /*******************************************************************************
  * P4::MergeData methods. Construction/destruction defined elsewhere
@@ -1416,6 +1430,8 @@ void	Init_P4()
     rb_define_method( cP4, "ssopassresult=", RUBY_METHOD_FUNC(p4_set_sso_passresult), 1);
     rb_define_method( cP4, "ssofailresult", RUBY_METHOD_FUNC(p4_get_sso_failresult), 0);
     rb_define_method( cP4, "ssofailresult=", RUBY_METHOD_FUNC(p4_set_sso_failresult), 1);
+    rb_define_method( cP4, "ssohandler", RUBY_METHOD_FUNC(p4_get_ssohandler), 0);
+    rb_define_method( cP4, "ssohandler=", RUBY_METHOD_FUNC(p4_set_ssohandler), 1);
 
 
     // P4::MergeData class

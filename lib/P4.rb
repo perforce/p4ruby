@@ -118,6 +118,13 @@ class P4
   PROG_FAILDONE         = 2
   PROG_FLUSH            = 3
 
+  # SSO Handler return values constants
+  SSO_PASS	            = 0  # SSO succeeded (result is an authentication token)
+	SSO_FAIL	            = 1  # SSO failed (result will be logged as error message)
+	SSO_UNSET	            = 2  # Client has no SSO support
+	SSO_EXIT	            = 3  # Stop login process
+	SSO_SKIP	            = 4  # Fall back to default P4API behavior
+
   # Mappings for P4#each_<spec>
   # Hash of type vs. key
   SpecTypes = {
@@ -667,6 +674,15 @@ class P4
     def outputMessage(message)
       p "message:", message
       HANDLED
+    end
+  end
+
+  #*****************************************************************************
+  # P4::SSOHandler class.
+  #*****************************************************************************
+  class SSOHandler
+    def authorize(vars, maxLength)
+      [ SSO_SKIP, "" ]
     end
   end
 end # class P4

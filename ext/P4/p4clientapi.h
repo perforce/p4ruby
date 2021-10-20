@@ -179,6 +179,8 @@ public:
     VALUE GetSSOPassResult();
     VALUE SetSSOFailResult( VALUE r );
     VALUE GetSSOFailResult();
+    VALUE SetSSOHandler( VALUE handler );
+    VALUE GetSSOHandler() { return ui.GetRubySSOHandler(); }
 
     // Ruby garbage collection
     void  GCMark();

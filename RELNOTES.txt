@@ -1,7 +1,7 @@
                            Release Notes for
                 P4Ruby, Perforce's script API for Ruby
 
-                            Version 2021.1
+                            Version 2021.1 Patch 1
 
 Introduction
 
@@ -68,8 +68,9 @@ Building P4Ruby from Source
 
     3. Execute the build commands:
 
-       bundle install
-       bundle exec rake compile --p4api_dir=<absolute path to Perforce C++ API>
+       bundle install        
+       bundle exec rake compile -- --p4api_dir=<absolute path to Perforce C++ API> \
+            --with-ssl-dir=<absolute path to OpenSSL libraries matching Perforce C++ API>
 
        Note: If the --p4api_dir flag is not provided, P4Ruby will attempt
        to download and extract correct version of Perforce C++ API
@@ -165,6 +166,14 @@ Key to symbols used in change notes below.
      ** -- requires P4Ruby built with new P4API
     *** -- requires new p4d server program
 
+--------------------------------------------------------------------------
+
+New functionality in 2021.1 Patch 1
+
+    #2187837 (Job #108007) * **
+        Added callback based SSO handler.
+
+--------------------------------------------------------------------------
 --------------------------------------------------------------------------
 
 New functionality in 2021.1

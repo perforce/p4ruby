@@ -66,6 +66,19 @@ static const int CANCEL = 2;
  * server, and converts the data to Ruby form for returning to the caller.
  ******************************************************************************/
 
+class SSOShim : public ClientSSO {
+public:
+	SSOShim(ClientUserRuby *ui) : ui(ui) {}
+	virtual ClientSSOStatus	Authorize( StrDict &vars,
+				           int maxLength,
+				           StrBuf &result )
+	{
+		return ui->Authorize(vars, maxLength, result);
+	}
+private:
+	ClientUserRuby *ui;
+} ;
+
 ClientUserRuby::ClientUserRuby(SpecMgr *s) {
 	specMgr = s;
 	debug = 0;
@@ -78,15 +91,22 @@ ClientUserRuby::ClientUserRuby(SpecMgr *s) {
 	rubyExcept = 0;
 	alive = 1;
 	track = false;
-    SetSSOHandler( ssoHandler = new P4ClientSSO( s ) );
+    	SetSSOHandler( new SSOShim( this ) );
+
+	ssoEnabled = 0;
+	ssoResultSet = 0;
+	ssoResult = Qnil;
+	ssoHandler = Qnil;
 
 	ID idP4 = rb_intern("P4");
 	ID idP4OH = rb_intern("OutputHandler");
 	ID idP4Progress = rb_intern("Progress");
+	ID idP4SSO = rb_intern("SSOHandler");
 
 	VALUE cP4 = rb_const_get_at(rb_cObject, idP4);
 	cOutputHandler = rb_const_get_at(cP4, idP4OH);
 	cProgress = rb_const_get_at(cP4, idP4Progress );
+	cSSOHandler = rb_const_get_at(cP4, idP4SSO);
 }
 
 void ClientUserRuby::Reset() {
@@ -721,47 +741,130 @@ void ClientUserRuby::GCMark() {
 	if (mergeResult != Qnil) rb_gc_mark( mergeResult);
 	if (handler != Qnil) rb_gc_mark( handler);
 	if (progress != Qnil) rb_gc_mark( progress );
-	rb_gc_mark( cOutputHandler);
+	if (ssoResult != Qnil) rb_gc_mark( ssoResult );
+	if (ssoHandler != Qnil) rb_gc_mark( ssoHandler );
+	rb_gc_mark( cOutputHandler );
 	rb_gc_mark( cProgress );
+	rb_gc_mark( cSSOHandler );
 
 	results.GCMark();
-	ssoHandler->GCMark();
 }
 
-//
-// SSO handler
-//
 
-P4ClientSSO::P4ClientSSO( SpecMgr *s )
-{
-    specMgr = s;
-    resultSet = 0;
-    ssoEnabled = 0;
-    result = Qnil;
+/*
+ * Set the Handler object. Double-check that it is either nil or
+ * an instance of OutputHandler to avoid future problems
+ */
+
+VALUE
+ClientUserRuby::SetRubySSOHandler(VALUE h) {
+	if (P4RDB_CALLS) fprintf(stderr, "[P4] SetSSOHandler()\n");
+
+	if (Qnil != h && Qfalse == rb_obj_is_kind_of(h, cSSOHandler)) {
+		rb_raise(eP4, "Handler needs to be an instance of P4::SSOHandler");
+		return Qfalse;
+	}
+
+	ssoHandler = h;
+	alive = 1; // ensure that we don't drop out after the next call
+
+	return Qtrue;
+}
+
+
+// returns true if output should be reported
+// false if the output is handled and should be ignored
+static VALUE CallMethodSSO(VALUE data) {
+	VALUE *args = reinterpret_cast<VALUE *>(data);
+	return rb_funcall(args[0], (ID) rb_intern("authorize"), 2, args[1], args[2]);
 }
 
 ClientSSOStatus
-P4ClientSSO::Authorize( StrDict &vars, int maxLength, StrBuf &strbuf )
+ClientUserRuby::CallSSOMethod(VALUE vars, int maxLength, StrBuf &result) {
+	ClientSSOStatus answer = CSS_SKIP;
+	int excepted = 0;
+	result.Clear();
+
+	if (P4RDB_COMMANDS) fprintf(stderr, "[P4] CallSSOMethod\n");
+
+	// some wild hacks to satisfy the rb_protect method
+
+	VALUE args[3] = { ssoHandler, vars, INT2NUM( maxLength ) };
+
+	VALUE res = rb_protect(CallMethodSSO, (VALUE) args, &excepted);
+
+	if (excepted) { // exception thrown
+		alive = 0;
+		rb_jump_tag(excepted);
+	} else if( FIXNUM_P( res ) ) {
+		int a = NUM2INT(res);
+		if (P4RDB_COMMANDS)
+			fprintf(stderr, "[P4] CallSSOMethod returned %d\n", a);
+
+		if( a < CSS_PASS || a > CSS_SKIP )
+			rb_raise(eP4, "P4::SSOHandler::authorize returned out of range response");
+		answer = (ClientSSOStatus) a;
+	} else if( Qtrue == rb_obj_is_kind_of(res, rb_cArray) ) {
+		VALUE resval1 = rb_ary_shift(res);
+		Check_Type( resval1, T_FIXNUM );
+		int a = NUM2INT(resval1);
+		if( a < CSS_PASS || a > CSS_SKIP )
+			rb_raise(eP4, "P4::SSOHandler::authorize returned out of range response");
+		answer = (ClientSSOStatus) a;
+
+		VALUE resval2 = rb_ary_shift(res);
+		if( resval2 != Qnil )
+		{
+			Check_Type( resval2, T_STRING );
+			result.Set(StringValuePtr(resval2));
+			if (P4RDB_COMMANDS)
+				fprintf(stderr, "[P4] CallSSOMethod returned %d, %s\n", a, result.Text());
+		}
+
+	} else {
+		Check_Type( res, T_STRING );
+		answer = CSS_PASS;
+
+		result.Set(StringValuePtr(res));
+		if (P4RDB_COMMANDS)
+			fprintf(stderr, "[P4] CallSSOMethod returned %s\n", result.Text());
+
+	}
+
+	return answer;
+}
+
+ClientSSOStatus
+ClientUserRuby::Authorize( StrDict &vars, int maxLength, StrBuf &strbuf )
 {
-    ssoVars.Clear();
+	ssoVars.Clear();
 
-    if( !ssoEnabled )
-        return CSS_SKIP;
+	if( ssoHandler != Qnil )
+	{
+		ClientSSOStatus res = CallSSOMethod( specMgr->StrDictToHash(&vars), maxLength, strbuf );
+		if( res != CSS_SKIP )
+			return res;
+		if (P4RDB_COMMANDS)
+			fprintf(stderr, "[P4] Authorize skipped result from SSO Handler\n" );
+	}
 
-    if( ssoEnabled < 0 )
-        return CSS_UNSET;
+	if( !ssoEnabled )
+		return CSS_SKIP;
 
-    if( resultSet )
-    {
-        strbuf.Clear();
-		VALUE resval = result;
+	if( ssoEnabled < 0 )
+		return CSS_UNSET;
 
-        //if( P4RDB_CALLS )
-        //    std::cerr << "[P4] ClientSSO::Authorize(). Using supplied input"
-        //              << std::endl;
+	if( ssoResultSet )
+	{
+		strbuf.Clear();
+			VALUE resval = ssoResult;
 
-		if (Qtrue == rb_obj_is_kind_of(result, rb_cArray)) {
-			resval = rb_ary_shift(result);
+		//if( P4RDB_CALLS )
+		//    std::cerr << "[P4] ClientSSO::Authorize(). Using supplied input"
+		//              << std::endl;
+
+		if (Qtrue == rb_obj_is_kind_of(ssoResult, rb_cArray)) {
+			resval = rb_ary_shift(ssoResult);
 		}
 	
 		if( resval != Qnil ) {
@@ -771,111 +874,106 @@ P4ClientSSO::Authorize( StrDict &vars, int maxLength, StrBuf &strbuf )
 			strbuf.Set(StringValuePtr(str));
 		}
 
-        return resultSet == 2 ? CSS_FAIL
-                              : CSS_PASS;
-    }
+		return ssoResultSet == 2 ? CSS_FAIL
+				: CSS_PASS;
+	}
 
-    ssoVars.CopyVars( vars );
-    return CSS_EXIT;
+	ssoVars.CopyVars( vars );
+	return CSS_EXIT;
 }
 
 VALUE
-P4ClientSSO::EnableSSO( VALUE e )
+ClientUserRuby::EnableSSO( VALUE e )
 {
-    if( e == Qnil )
-    {
-        ssoEnabled = 0;
-        return Qtrue;
-    }
+	if( e == Qnil )
+	{
+		ssoEnabled = 0;
+		return Qtrue;
+	}
 
-    if( e == Qtrue )
-    {
-        ssoEnabled = 1;
-        return Qtrue;
-    }
+	if( e == Qtrue )
+	{
+		ssoEnabled = 1;
+		return Qtrue;
+	}
 
-    if( e == Qfalse )
-    {
-        ssoEnabled = -1;
-        return Qtrue;
-    }
+	if( e == Qfalse )
+	{
+		ssoEnabled = -1;
+		return Qtrue;
+	}
 
 	return Qfalse;
 }
 
 VALUE
-P4ClientSSO::SSOEnabled()
+ClientUserRuby::SSOEnabled()
 {
-    if( ssoEnabled == 1 )
-    {
-        return Qtrue;
-    }
-    else if( ssoEnabled == -1 )
-    {
-        return Qfalse;
-    }
-    else
-    {
-        return Qnil;
-    }
+	if( ssoEnabled == 1 )
+	{
+		return Qtrue;
+	}
+	else if( ssoEnabled == -1 )
+	{
+		return Qfalse;
+	}
+	else
+	{
+		return Qnil;
+	}
 }
 
 VALUE
-P4ClientSSO::SetPassResult( VALUE i )
+ClientUserRuby::SetSSOPassResult( VALUE i )
 {
-    resultSet = 1;
-    return SetResult( i );
+	ssoResultSet = 1;
+	return SetSSOResult( i );
 }
 
 VALUE
-P4ClientSSO::GetPassResult()
+ClientUserRuby::GetSSOPassResult()
 {
-    if( resultSet == 1 )
-    {
-        return result;
-    }
-    else
-    {
-        return Qnil;
-    }
+	if( ssoResultSet == 1 )
+	{
+		return ssoResult;
+	}
+	else
+	{
+		return Qnil;
+	}
 }
 
 VALUE
-P4ClientSSO::SetFailResult( VALUE i )
+ClientUserRuby::SetSSOFailResult( VALUE i )
 {
-    resultSet = 2;
-    return SetResult( i );
+	ssoResultSet = 2;
+	return SetSSOResult( i );
 }
 
 VALUE
-P4ClientSSO::GetFailResult()
+ClientUserRuby::GetSSOFailResult()
 {
-    if( resultSet == 2 )
-    {
-        return result;
-    }
-    else
-    {
-        return Qnil;
-    }
+	if( ssoResultSet == 2 )
+	{
+		return ssoResult;
+	}
+	else
+	{
+		return Qnil;
+	}
 }
 
 VALUE
-P4ClientSSO::SetResult( VALUE i )
+ClientUserRuby::SetSSOResult( VALUE i )
 {
-	//if (P4RDB_CALLS) fprintf(stderr, "[P4] P4ClientSSO::SetResult()\n");
+	if (P4RDB_CALLS) fprintf(stderr, "[P4] P4ClientSSO::SetResult()\n");
  
-	result = i;
+	ssoResult = i;
 	return Qtrue;
 }
 
 VALUE
-P4ClientSSO::GetSSOVars()
+ClientUserRuby::GetSSOVars()
 {
-    return specMgr->StrDictToHash( &ssoVars );
-}
-
-void
-P4ClientSSO::GCMark() {
-	if (result != Qnil) rb_gc_mark( result );
+    	return specMgr->StrDictToHash( &ssoVars );
 }

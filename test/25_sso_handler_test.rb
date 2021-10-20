@@ -121,7 +121,7 @@ class TC_SSO < Test::Unit::TestCase
         end
         assert_equal( {}, p4.ssovars )
       rescue P4Exception => e
-	assert( false, "Exception thrown: #{e}" )
+	      assert( false, "Exception thrown: #{e}" )
       ensure
         p4.disconnect
       end
@@ -201,6 +201,224 @@ class TC_SSO < Test::Unit::TestCase
           assert( e.to_s.include?("[Error]: Single sign-on on client failed: My bad result!"), "Exception thrown: #{e}" )
         end
         assert_equal( [], p4.ssovars.keys )
+      rescue P4Exception => e
+        assert( false, "Exception thrown: #{e}" )
+      ensure
+        p4.disconnect
+      end
+    end
+  end
+
+  # Callback tests
+
+  class MySSOHandler < P4::SSOHandler
+    def initialize( resp )
+      @result = resp
+      @vars = nil
+      @maxlen = nil
+    end
+
+    attr_reader :vars, :maxlen
+
+    def authorize(vars, maxLength)
+      @vars = vars
+      @maxlen = maxLength
+      return @result
+    end
+  end
+
+  
+  def test_callback_in_out
+    begin
+      h = MySSOHandler.new([P4::SSO_PASS, "Handler good result!"])
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+      assert( h.authorize({"foo" => "bar"}, 128) == [P4::SSO_PASS, "Handler good result!"], "MySSOHandler repsonse is good" )
+      
+      assert( h.vars.kind_of?( Hash ) )
+      assert_equal( ["foo"], h.vars.keys )
+      assert_equal( 128, h.maxlen )
+    end
+  end
+
+  def test_callback_pass_1
+    begin
+      assert( p4, "Failed to create Perforce client" )
+
+      h = MySSOHandler.new([P4::SSO_PASS, "Handler good result!"])
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+
+      assert( h.authorize(Hash.new, 128) == [P4::SSO_PASS, "Handler good result!"], "MySSOHandler repsonse is good" )
+
+      # verify that we get a "you need to accept" when connecting
+      begin
+        p4.connect
+        p4.ssohandler = h
+        assert( p4.ssohandler == h, "Failed to set/get MySSOHandler" )
+
+        begin
+          assert_equal( ["User", "TicketExpiration"], p4.run( 'login' )[0].keys )
+        rescue P4Exception => e
+          assert( e.to_s.include?("[Error]: Single sign-on on client failed: My bad result!"), "Exception thrown: #{e}" )
+        end
+        assert( h.vars.kind_of?( Hash ) )
+        assert_equal( ["user", "serverAddress", "P4PORT", "ssoArgs", "data"], h.vars.keys )
+        assert_equal( 131072, h.maxlen )
+      rescue P4Exception => e
+        assert( false, "Exception thrown: #{e}" )
+      ensure
+        p4.disconnect
+      end
+    end
+  end
+
+  def test_callback_pass_2
+    begin
+      assert( p4, "Failed to create Perforce client" )
+
+      h = MySSOHandler.new(P4::SSO_PASS)
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+
+      assert( h.authorize(Hash.new, 128) == P4::SSO_PASS, "MySSOHandler repsonse is good" )
+
+      # verify that we get a "you need to accept" when connecting
+      begin
+        p4.connect
+        p4.ssohandler = h
+        assert( p4.ssohandler == h, "Failed to set/get MySSOHandler" )
+
+        begin
+          assert_equal( ["User", "TicketExpiration"], p4.run( 'login' )[0].keys )
+        rescue P4Exception => e
+          assert( e.to_s.include?("[Error]: Single sign-on on client failed: My bad result!"), "Exception thrown: #{e}" )
+        end
+        assert( h.vars.kind_of?( Hash ) )
+        assert_equal( ["user", "serverAddress", "P4PORT", "ssoArgs", "data"], h.vars.keys )
+        assert_equal( 131072, h.maxlen )
+      rescue P4Exception => e
+        assert( false, "Exception thrown: #{e}" )
+      ensure
+        p4.disconnect
+      end
+    end
+  end
+
+  def test_callback_pass_3
+    begin
+      assert( p4, "Failed to create Perforce client" )
+
+      h = MySSOHandler.new("Handler good result!")
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+
+      assert( h.authorize(Hash.new, 128) == "Handler good result!", "MySSOHandler repsonse is good" )
+
+      # verify that we get a "you need to accept" when connecting
+      begin
+        p4.connect
+        p4.ssohandler = h
+        assert( p4.ssohandler == h, "Failed to set/get MySSOHandler" )
+
+        begin
+          assert_equal( ["User", "TicketExpiration"], p4.run( 'login' )[0].keys )
+        rescue P4Exception => e
+          assert( e.to_s.include?("[Error]: Single sign-on on client failed: My bad result!"), "Exception thrown: #{e}" )
+        end
+        assert( h.vars.kind_of?( Hash ) )
+        assert_equal( ["user", "serverAddress", "P4PORT", "ssoArgs", "data"], h.vars.keys )
+        assert_equal( 131072, h.maxlen )
+      rescue P4Exception => e
+        assert( false, "Exception thrown: #{e}" )
+      ensure
+        p4.disconnect
+      end
+    end
+  end
+
+  def test_callback_fail
+    begin
+      assert( p4, "Failed to create Perforce client" )
+
+      h = MySSOHandler.new([P4::SSO_FAIL, "Handler bad result!"])
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+
+      assert( h.authorize(Hash.new, 128) == [P4::SSO_FAIL, "Handler bad result!"], "MySSOHandler repsonse is good" )
+
+      # verify that we get a "you need to accept" when connecting
+      begin
+        p4.connect
+        p4.ssohandler = h
+        assert( p4.ssohandler == h, "Failed to set/get MySSOHandler" )
+
+        begin
+          assert_equal( ["User", "TicketExpiration"], p4.run( 'login' )[0].keys )
+        rescue P4Exception => e
+          assert( e.to_s.include?("[Error]: Single sign-on on client failed: Handler bad result!"), "Exception thrown: #{e}" )
+        end
+        assert( h.vars.kind_of?( Hash ) )
+        assert_equal( ["user", "serverAddress", "P4PORT", "ssoArgs", "data"], h.vars.keys )
+        assert_equal( 131072, h.maxlen )
+      rescue P4Exception => e
+        assert( false, "Exception thrown: #{e}" )
+      ensure
+        p4.disconnect
+      end
+    end
+  end
+
+  def test_callback_illegal_1
+    begin
+      assert( p4, "Failed to create Perforce client" )
+
+      h = MySSOHandler.new(["Handler bad illegal!", P4::SSO_FAIL])
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+
+      assert( h.authorize(Hash.new, 128) == ["Handler bad illegal!", P4::SSO_FAIL], "MySSOHandler repsonse is good" )
+
+      # verify that we get a "you need to accept" when connecting
+      begin
+        p4.connect
+        p4.ssohandler = h
+        assert( p4.ssohandler == h, "Failed to set/get MySSOHandler" )
+
+        begin
+          assert_equal( ["User", "TicketExpiration"], p4.run( 'login' )[0].keys )
+        rescue Exception => e
+          assert( e.to_s.match?("wrong argument type String \\(expected (Fixnum|Integer)\\)"), "Exception thrown: #{e}" )
+        end
+      rescue P4Exception => e
+        assert( false, "Exception thrown: #{e}" )
+      ensure
+        p4.disconnect
+      end
+    end
+  end
+
+  def test_callback_illegal_2
+    begin
+      assert( p4, "Failed to create Perforce client" )
+
+      h = MySSOHandler.new([15, "Handler bad illegal!"])
+      assert( h.kind_of?( MySSOHandler ), "Failed to create MySSOHandler" )
+      assert( h.kind_of?( P4::SSOHandler ), "MySSOHandler is not a SSOHandler" )
+
+      assert( h.authorize(Hash.new, 128) == [15, "Handler bad illegal!"], "MySSOHandler repsonse is good" )
+
+      # verify that we get a "you need to accept" when connecting
+      begin
+        p4.connect
+        p4.ssohandler = h
+        assert( p4.ssohandler == h, "Failed to set/get MySSOHandler" )
+
+        begin
+          assert_equal( ["User", "TicketExpiration"], p4.run( 'login' )[0].keys )
+        rescue Exception => e
+          assert( e.to_s.include?("P4::SSOHandler::authorize returned out of range response"), "Exception thrown: #{e}" )
+        end
       rescue P4Exception => e
         assert( false, "Exception thrown: #{e}" )
       ensure

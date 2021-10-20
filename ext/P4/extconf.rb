@@ -444,15 +444,11 @@ end
 # directory name where we can download files from.
 def p4_platform_label
   case RbConfig::CONFIG["target_os"].downcase
-    when /nt|mswin|mingw/
+    when /nt|mswin|mingw|cygwin|msys/
       # Ruby on windows is only MinGW via Rubyinstaller.org, though this may
       # not work on all rubies.
-      if RbConfig::CONFIG['MAJOR'].to_i >= 2
-        # Note that x64 or x86 needs to be suffixed to this
-        'mingw64'
-      else
-        'mingwx86'
-      end
+      # There are too many permutations of Windows p4api, to automate.
+      raise 'Automatic fetching of p4api from perforce FTP is not supported on Windows'
     when /darwin19|darwin[2-9][0-9]/
       "macosx1015#{p4_cpu(:darwin)}"
     when /darwin/      
@@ -460,9 +456,7 @@ def p4_platform_label
     when /solaris/
       "solaris10#{p4_cpu(:solaris)}"
     when /linux/
-      "linux26#{p4_cpu(:linux)}"
-    when /cygwin/
-      raise 'cygwin is not supported for the --download-p4api option'
+      "linux26#{p4_cpu(:linux)}"    
   end
 end
 

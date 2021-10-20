@@ -715,6 +715,17 @@ P4ClientApi::SetProgress( VALUE progress ) {
     return ui.SetProgress( progress );
 }
 
+VALUE
+P4ClientApi::SetSSOHandler( VALUE h )
+{
+    if ( P4RDB_COMMANDS )
+        fprintf( stderr, "[P4] Received SSO handler object\n" );
+
+    ui.SetRubySSOHandler( h );
+
+    return Qtrue;
+}
+
 
 void
 P4ClientApi::GCMark()
