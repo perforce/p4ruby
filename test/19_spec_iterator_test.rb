@@ -83,6 +83,35 @@ class TC_SpecIterator < Test::Unit::TestCase
         p4.each_streams { |e| }
         p4.each_nonexistent_specs { |e| }
       end
+
+      # Set up the client
+      spec = p4.run("client", "-o")
+      spec = p4.fetch_client()
+      p4.save_client(spec)
+
+      # Add a test file
+      file = "testfile.txt"
+      File.open( file, "w" ) do
+        |f|
+        f.puts( "This is a test file" )
+      end
+      p4.run_add( file )
+      change = p4.fetch_change
+      change._description = "Add some test files\n"
+
+      p4.run_submit(change)
+      p4.run( "attribute", "-f" , "-n", "test_tag_4", "-v", "set", "//depot/testfile.txt" )
+
+      # Confirm that attribute with number at the end gets converted to array
+      file = p4.run("fstat", "-Oa", "//depot/...")
+      assert_kind_of(Array , file[0]["attr-test_tag_"])
+
+      # Disable array conversion
+      p4.set_array_conversion = false
+
+      file = p4.run("fstat", "-Oa", "//depot/...")
+      assert_kind_of(String , file[0]["attr-test_tag_4"])
+      
     ensure
       p4.disconnect
     end

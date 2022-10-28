@@ -244,6 +244,12 @@ P4ClientApi::SetDebug( int d )
 }
 
 void
+P4ClientApi::SetArrayConversion( int i )
+{
+    specMgr.SetArrayConversion( i );
+}
+
+void
 P4ClientApi::SetProtocol( const char *var, const char *val )
 {
    client.SetProtocol( var, val );

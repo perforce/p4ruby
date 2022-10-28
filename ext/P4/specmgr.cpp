@@ -123,6 +123,7 @@ struct defaultspec {
     {
         "group",
         "Group;code:401;rq;ro;len:32;;"
+	"Description;code:NNN;type:text;fmt:L:len:128;;"
         "MaxResults;code:402;type:word;len:12;;"
         "MaxScanRows;code:403;type:word;len:12;;"
         "MaxLockTime;code:407;type:word;len:12;;"
@@ -289,6 +290,7 @@ struct defaultspec {
             "mergedown/mergeany;open:isolate;;"
         "ParentView;code:NNN;rq;open:isolate;"
         "pre:inherit;val:noinherit/inherit;;"
+	"Components;code:NNN;type:wlist;words:3;maxwords:4;len:64;open:propagate;fmt:C;;"
         "Paths;code:710;rq;type:wlist;words:2;maxwords:3;len:64;open:propagate;fmt:C;;"
         "Remapped;code:711;type:wlist;words:2;len:64;open:propagate;fmt:C;;"
         "Ignored;code:712;type:wlist;words:1;len:64;open:propagate;fmt:C;;"
@@ -324,6 +326,7 @@ SpecMgr::SpecMgr()
 {
     debug = 0;
     specs = 0;
+    convertArray = 1;
     Reset();
 }
 
@@ -590,7 +593,9 @@ SpecMgr::InsertItem( VALUE hash, const StrPtr *var, const StrPtr *val )
     StrBuf      base, index;
     StrRef      comma( "," );
 
-    SplitKey( var, base, index );
+    if (convertArray) {
+        SplitKey( var, base, index );
+    }
 
     // If there's no index, then we insert into the top level hash
     // but if the key is already defined then we need to rename the key. This

@@ -632,6 +632,23 @@ static VALUE p4_set_graph( VALUE self, VALUE toggle )
     return flag ? Qtrue : Qfalse;   // Seems to be ignored...
 }
 
+static VALUE p4_set_array_conversion( VALUE self, VALUE toggle )
+{
+    P4ClientApi	*p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    int	flag = 1;
+
+    if( toggle == Qtrue )
+    flag = 1;
+    else if( toggle == Qfalse )
+	flag = 0;
+    else
+    flag = NUM2INT( toggle ) ? 1 : 0;
+    
+    p4->SetArrayConversion( flag );
+    return flag ? Qtrue : Qfalse;
+}
+
 /*******************************************************************************
  * Running commands.  General purpose Run method and method for supplying
  * input to "p4 xxx -i" commands
@@ -1403,6 +1420,7 @@ void	Init_P4()
     // Spec parsing
     rb_define_method( cP4, "parse_spec", RUBY_METHOD_FUNC(p4_parse_spec), 2 );
     rb_define_method( cP4, "format_spec", RUBY_METHOD_FUNC(p4_format_spec), 2 );
+    rb_define_method( cP4, "set_array_conversion=", RUBY_METHOD_FUNC(p4_set_array_conversion), 1 );
 
     // Identification
     rb_define_const( cP4, "P4API_VERSION", P4Utils::ruby_string(P4APIVER_STRING));

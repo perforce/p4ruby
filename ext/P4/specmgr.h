@@ -44,6 +44,7 @@ class SpecMgr
 		SpecMgr();
 		~SpecMgr();
 	void	SetDebug( int i )	{ debug = i; 	}
+	void	SetArrayConversion( int a)	{ convertArray = a; }
 
 	// Clear the spec cache and revert to internal defaults
 	void	Reset();
@@ -97,6 +98,7 @@ class SpecMgr
 
     private:
 	int		debug;
+	int convertArray;
 	StrBufDict *	specs;
 };
 

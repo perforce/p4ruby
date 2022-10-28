@@ -44,9 +44,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #undef HAVE_FSYNC
 #undef HAVE_TRUNCATE
 
-#ifdef OS_NT
+#ifdef _WIN32
 
-// Stupid "#define SetPort SetPortA" in winspool.h
+// Unnecessary "#define SetPort SetPortA" in winspool.h
 #  ifdef SetPort
 #    undef SetPort
 #  endif

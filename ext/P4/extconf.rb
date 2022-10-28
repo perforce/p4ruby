@@ -162,7 +162,7 @@ def set_platform_opts
       # gcc detection patterns above won't catch that, so for these
       # platforms, we specifically convert cc to c++.
       CONFIG['LDSHARED'].sub!(/^cc/, 'c++')
-    when /MINGW32/
+    when /MINGW32/, /MINGW/
       # When building with MinGW we need to statically link libgcc
       # and make sure we're linking with gcc and not g++. On older
       # Rubies, they use LDSHARED; newer ones (>=1.9) use LDSHAREDXX
@@ -190,6 +190,10 @@ def set_platform_cppflags
   end
 
   if (p4osname == 'MINGW32')
+    $CPPFLAGS += '-DOS_NT -DCASE_INSENSITIVE '
+  end
+
+  if (p4osname == 'MINGW')
     $CPPFLAGS += '-DOS_NT -DCASE_INSENSITIVE '
   end
 
@@ -238,7 +242,7 @@ def set_platform_libs
         $LDFLAGS.slice!('-arch ppc')
         $LDFLAGS += ' -framework CoreFoundation -framework Foundation'
       end
-    when 'LINUX', 'MINGW32'
+    when 'LINUX', 'MINGW32', 'MINGW'
       $LDFLAGS += ' -Wl,--allow-multiple-definition'
       have_library('supc++')
   end

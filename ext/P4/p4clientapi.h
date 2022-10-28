@@ -89,6 +89,7 @@ public:
     void SetTrustFile( const char *p );
     void SetUser( const char *u )	{ client.SetUser( u );		}
     void SetVersion( const char *v )	{ version = v;			}
+    void SetArrayConversion ( int i );
 
     int	 GetApiLevel()			{ return apiLevel;		}
     const StrPtr &GetCharset()		{ return client.GetCharset();	}
