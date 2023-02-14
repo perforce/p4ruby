@@ -266,9 +266,9 @@ class P4ApiVersion
     # subdirectory. Look there if we can't find it in the API root
     #
     ver_file = dir + "/Version"
-    unless File.exists?(ver_file)
+    unless File.exist?(ver_file)
       ver_file = dir + "/sample/Version"
-      return nil unless File.exists?(ver_file)
+      return nil unless File.exist?(ver_file)
     end
 
     re = Regexp.new('^RELEASE = (\d+)\s+(\d+)\s+(\w*\S*)\s*;')
