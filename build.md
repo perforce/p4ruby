@@ -2,7 +2,7 @@
 
 
 1. Download the Perforce C++ API from the Perforce FTP site at
-   ftp://ftp.perforce.com/perforce. \
+   <ftp://ftp.perforce.com/perforce>. \
    The API archive is located in release and platform-specific subdirectories and is named
    *"p4api-glibc2.3-openssl1.1.1.tgz".<br><br>*
 
