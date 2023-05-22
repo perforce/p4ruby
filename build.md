@@ -4,33 +4,33 @@
 1. Download the Perforce C++ API from the Perforce FTP site at
    <ftp://ftp.perforce.com/perforce>. \
    The API archive is located in release and platform-specific subdirectories and is named
-   *"p4api-glibc2.3-openssl1.1.1.tgz".<br><br>*
+   *"p4api-glibc2.3-openssl1.1.1.tgz".<br>*
 
    **Note: 32-bit builds of P4Ruby require a 32-bit version of the C++ API and a 32-bit version of Ruby.\
-           64-bit builds of P4Ruby require a 64-bit version of the C++ API and a 64-bit version of Ruby.<br><br>**
-   Unzip the archive into an empty directory.<br><br>
+           64-bit builds of P4Ruby require a 64-bit version of the C++ API and a 64-bit version of Ruby.<br>**
+   Unzip the archive into an empty directory.<br>
 
-2. Extract the P4Ruby API archive into a new, empty directory.<br><br>
+2. Extract the P4Ruby API archive into a new, empty directory.<br>
 
-3. Execute the build commands:<br><br>
+3. Execute the build commands:<br>
 
    *bundle install \
    bundle exec rake compile -- --with-p4api_dir=<absolute path to Perforce C++ API> \
-              --with-ssl-dir=<absolute path to OpenSSL libraries matching Perforce C++ API><br><br>*
+              --with-ssl-dir=<absolute path to OpenSSL libraries matching Perforce C++ API><br>*
    
    OR pass through environment variables\
-   *bundle exec rake compile p4api_dir=<*absolute path to Perforce C++ API*><br><br>*
+   *bundle exec rake compile p4api_dir=<*absolute path to Perforce C++ API*><br>*
 
    **Note: If the --p4api_dir flag is not provided, P4Ruby will attempt\
-   to download and extract correct version of Perforce C++ API<br><br>**
+   to download and extract correct version of Perforce C++ API<br>**
 
-4. Test your distribution.<br><br>
+4. Test your distribution.<br>
 
-    *bundle exec rake test<br><br>*
+    *bundle exec rake test<br>*
 
-    Tests require the perforce server binary (p4d) present in the path.<br><br>
+    Tests require the perforce server binary (p4d) present in the path.<br>
 
-5. Install P4Ruby into your local gem cache:<br><br>
+5. Install P4Ruby into your local gem cache:<br>
 
     *bundle exec rake install*
 
