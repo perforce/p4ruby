@@ -1,6 +1,10 @@
 # Building P4Ruby from Source
 
 
+     Note: Make sure you have following packages installed on your system:
+           a. build-essential
+           b. libssl-dev
+
 1. Download the Perforce C++ API from the Perforce FTP site at
    <ftp://ftp.perforce.com/perforce> . \
    The API archive is located in release and platform-specific subdirectories and is named
@@ -30,10 +34,11 @@
     *bundle exec rake test*
 
     Tests require the perforce server binary (p4d) present in the path.
-
+   
 5. Install P4Ruby into your local gem cache:
 
-    *bundle exec rake install*
+    *bundle exec rake gem*\
+    *gem install pkg/p4ruby\*.gem -- --with-p4api_dir=<absolute path to Perforce C++ API>*
 
 ## SSL support
 
