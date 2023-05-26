@@ -1,7 +1,7 @@
                            Release Notes for
                 P4Ruby, Perforce's script API for Ruby
 
-                            Version 2022.1
+                            Version 2023.1
 
 Introduction
 
@@ -16,8 +16,8 @@ Introduction
     release up to the bug fix change level.
 
     Precompiled versions of P4Ruby are built against a corresponding version
-    of the Perforce	C++ API, e.g., P4Ruby 2022.1 will be compiled using a
-    2022.1 version of the P4API. You can always install P4Ruby using a
+    of the Perforce	C++ API, e.g., P4Ruby 2023.1 will be compiled using a
+    2023.1 version of the P4API. You can always install P4Ruby using a
     source-only variation, selecting a specific version of the P4API.
 
     To determine the version of your P4Ruby, and which version of the
@@ -26,7 +26,14 @@ Introduction
 
 --------------------------------------------------------------------------
 
-Installing P4Ruby
+Important End-of-Life Notice
+
+    This major release of P4Ruby would be the last to test against Ruby 2.7 
+    which is in EOL status. This is part of our commitment to focus on supported
+    technology platforms
+
+--------------------------------------------------------------------------
+Installation
 
     The recommended method of installing P4Ruby is via gems.
 
@@ -52,51 +59,11 @@ Installing P4Ruby
 
 Building P4Ruby from Source
 
-    1. Download the Perforce C++ API from the Perforce FTP site at
-       "ftp://ftp.perforce.com/perforce". The API archive is located
-       in release and platform-specific subdirectories and is named
-       "p4api-glibc2.3-openssl1.1.1.tgz" .
+    The official version of P4Ruby exists as source on:
+    https://github.com/perforce/p4ruby
 
-       Note: 32-bit builds of P4Ruby require a 32-bit version of the
-             C++ API and a 32-bit version of Ruby. 64-bit builds of
-             P4Ruby require a 64-bit version of the C++ API and a
-             64-bit version of Ruby.
-
-       Unzip the archive into an empty directory.
-
-    2. Extract the P4Ruby API archive into a new, empty directory.
-
-    3. Execute the build commands:
-
-       bundle install
-       bundle exec rake compile -- --with-p4api_dir=<absolute path to Perforce C++ API> \
-            --with-ssl-dir=<absolute path to OpenSSL libraries matching Perforce C++ API>
-
-       OR pass through environment variables
-       bundle exec rake compile p4api_dir=<absolute path to Perforce C++ API>
-
-       Note: If the --p4api_dir flag is not provided, P4Ruby will attempt
-       to download and extract correct version of Perforce C++ API
-
-    4. Test your distribution.
-
-        bundle exec rake test
-
-        Tests require the perforce server binary (p4d) present in the path.
-
-    5. Install P4Ruby into your local gem cache:
-
-        bundle exec rake install
-
-    SSL support
-    -----------
-
-    Perforce Server 2012.1 and later supports SSL connections and the
-    C++ API has been compiled with this support.
-
-    If the P4Ruby build detects that OpenSSL is available, it will be
-    included by default. If you want to use libraries deployed to nonstandard
-    paths, use the --ssl_dir=<path to Openssl include and lib folders>
+    Instructions for building are in the BUILD.md file which can be found
+    here - https://github.com/perforce/p4ruby/blob/master/build.md
 
 --------------------------------------------------------------------------
 
@@ -104,17 +71,18 @@ Compatibility Statements
 
     Server Compatibility
 
-      The 2022.1 release of P4Ruby supports the 2022.1 Perforce Server.
+      This release of P4Ruby supports the 2023.1 Perforce Server.
       Older releases might work but are not supported.
 
     API Compatibility
 
-      The 2022.1 release of P4Ruby supports the 2022.1 Perforce API.
-      Older releases might work but are not supported.
+      This release of P4Ruby supports the 2023.1 Perforce API 
+      (2023.1/2442900). Older releases might work but are not supported.
 
     Ruby Compatibility
 
-      The 2022.1 release of P4Ruby is supported on Ruby versions 2.7 3.0 and 3.1
+      This release of P4Ruby is supported on Ruby versions 2.7 3.0, 3.1 
+      and 3.2
 
       For detailed compatibility, please check the following table:
 
@@ -123,24 +91,28 @@ Compatibility Statements
              2.7     | 2020.1 or later
              3.0     | 2021.1 or later
              3.1     | 2022.1 or later
+             3.2     | 2023.1 or later
 
     OpenSSL Compatibility
 
-      P4Ruby requires OpenSSL 1.0.2+ or 1.1.1+
+      To build P4Ruby with encrypted communication support, you must use the
+      version of OpenSSL that Perforce C/C++ API has been built against.
 
-      Running P4Ruby linked to an older library will
-      fail with the error:
-
-        "SSL library must be at least version 1.0.2."
+      Beginning with the 2017.1 release of the Helix C/C++ API, the dependency 
+      on OpenSSL is now enforced and the SSL stub library has been removed.
+      Executables linked against the P4API libraries must also be linked against
+      real OpenSSL libraries: The latest 3.0.x or 1.1.1 patch is recommended
 
     Platform Compatibility
 
       While P4Ruby is generally portable, this release is certified
       only on the following platforms:
 
-        - RVM based installs for Ruby 2.7, 3.0 and 3.1 on Ubuntu and CentOS.
-        - rubyinstaller.org for Ruby 2.7, 3.0 and 3.1
-          on Windows Server 2016/2019, and Windows 10
+        Windows (x64)
+          Server 2016
+        Linux
+          Ubuntu 20.04, 22.04
+          CentOS 8
 
     Compiler Compatibility
 
@@ -169,6 +141,40 @@ Key to symbols used in change notes below.
      ** -- requires P4Ruby built with new P4API
     *** -- requires new p4d server program
 
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+New functionality in 2023.1 (2023.1/2446234) (2023/05/25)
+
+        #2443839 (Job #115709) * ** ***
+            This release of P4Ruby supports P4API 2023.1 (2023.1/2442900).
+
+        #2443217, #2438303 (Job #115281) *
+            Added support for Ruby 3.2.
+
+        #2439606 (Job #2439606) * **
+            Windows gems for P4Ruby are now shipped with OpenSSL 3.0.8
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+New functionality in 2022.1 Patch 2 (2022.1/2405581) (2023/02/10)
+
+        Important security note
+            This version addresses vulnerabilities in OpenSSL (CVE-2023-0286, 
+            CVE-2023-0215, CVE-2022-4450, CVE-2022-4304) by linking in version
+            1.1.1t of the library.
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+Bugs fixed in 2022.1 Patch 1 (2022.1/2368511)  (2022/11/10)
+    
+    (Job #113209) * **
+      Correct the handling of untranslated text left in the
+      compression buffer on Close(). Build only change.
+
+--------------------------------------------------------------------------
 --------------------------------------------------------------------------
 
 New functionality in 2022.1 (2022.1/2359956)  (2022/10/26)

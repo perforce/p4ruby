@@ -1502,6 +1502,11 @@ void	Init_P4()
 
     //	P4::Progress class.
     cP4Prog = rb_define_class_under( cP4, "Progress", rb_cObject );
+    
+    rb_undef_alloc_func(cP4);
+    rb_undef_alloc_func(cP4MD);
+    rb_undef_alloc_func(cP4Map);
+    rb_undef_alloc_func(cP4Msg);
 
 };
 

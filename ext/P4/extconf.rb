@@ -3,10 +3,10 @@
 $:.push File.expand_path("../../../lib", __FILE__)
 
 require 'mkmf'
-require 'net/ftp'
 require 'P4/version'
 require 'rbconfig'
 require 'openssl'
+require 'net/http'
 
 # Set this to the main version directory we look up in ftp.perforce.com for the P4API
 # This is ignored if you specify the version on the command line.
@@ -266,9 +266,9 @@ class P4ApiVersion
     # subdirectory. Look there if we can't find it in the API root
     #
     ver_file = dir + "/Version"
-    unless File.exists?(ver_file)
+    unless File.exist?(ver_file)
       ver_file = dir + "/sample/Version"
-      return nil unless File.exists?(ver_file)
+      return nil unless File.exist?(ver_file)
     end
 
     re = Regexp.new('^RELEASE = (\d+)\s+(\d+)\s+(\w*\S*)\s*;')
@@ -390,7 +390,7 @@ def resolve_p4api_dir
   end
 
   if !p4api_dir && !with_config('p4api-dir') && enable_config('p4api-download', true)
-    download_api_via_ftp
+    download_api_via_https
     unzip_file
     p4api_dir = downloaded_p4api_dir
     dir_config('p4api', "#{p4api_dir}/include", "#{p4api_dir}/lib")
@@ -468,7 +468,7 @@ def platform_dir_name
   "bin.#{p4_platform_label}"
 end
 
-def ftp_download_dir(version)
+def download_dir(version)
   "perforce/#{version}/#{platform_dir_name}"
 end
 
@@ -484,7 +484,9 @@ def filename
                 filename = 'p4api-openssl1.1.1.zip'
             when /1.0/
                 filename = 'p4api-openssl1.0.2.zip'
-             end
+            when /3.0/
+                filename = 'p4api-openssl3.zip'
+        end
     end
   elsif RbConfig::CONFIG['target_os'].downcase =~ /darwin19|darwin[2-9][0-9]/
     filename = 'p4api-openssl1.1.1.tgz'
@@ -496,69 +498,30 @@ def filename
                 filename = 'p4api-glibc2.3-openssl1.1.1.tgz'
             when /1.0/
                 filename = 'p4api-glibc2.3-openssl1.0.2.tgz'
+            when /3.0/
+                filename = 'p4api-glibc2.3-openssl3.tgz'
         end
     end
   end
   return filename
 end
 
-
-def remote_files_matching(ftp, dir, regex)
-  ftp.ls(dir.to_s).map { |entry|
-    if match = entry.match(regex)
-      yield match
-    else
-      nil
-    end
-  }.reject { |entry|
-    entry.nil?
-  }
-end
-
-def find_latest_with_p4api(ftp, versions)
-  versions.reverse_each { |v|
-    begin
-      remote_files_matching(ftp, "r#{v}/#{platform_dir_name}/", /p4api/) do
-        return v
-      end
-    rescue
-      next
-    end
-  }
-end
-
-def find_latest_version_dir(ftp)
-  ftp.chdir('perforce')
-
-  # Capture all versions
-  versions = remote_files_matching(ftp, '.', /r(1\d\.\d)/) { |m| m.captures.first }.sort
-
-  version = find_latest_with_p4api(ftp, versions)
-
-  ftp.chdir('..')
-
-  "r#{version}"
-end
-
-# Downloads the C++ P4API via FTP to the local directory, then 'initializes' it
+#############################################
+# Downloads the C++ P4API via HTTPS to the local directory, then 'initializes' it
 # by unpacking it.
-def download_api_via_ftp
-  ftp = Net::FTP.new('ftp.perforce.com')
-  ftp.passive=true
-  ftp.login
+def download_api_via_https
 
-  # At one point, we allowed the gem build to just find the most recent p4api build.
-  # P4Ruby probably shouldn't do that by default.
-  #version_dir = find_latest_version_dir(ftp)
+  uri=URI('https://ftp.perforce.com:443')
+  dir = download_dir(p4api_version_dir)
 
-  dir = ftp_download_dir(p4api_version_dir)
-  ftp.chdir(dir)
+  puts "Downloading #{filename} from #{dir} on https://ftp.perforce.com"
 
-  puts "downloading #{filename} from #{dir} on ftp.perforce.com"
-  ftp.getbinaryfile(filename)
-
-ensure
-  ftp.close if ftp and !ftp.closed?
+  Net::HTTP.start(uri.host, uri.port, :use_ssl =>true) do |http|
+      resp = http.get("/" + dir + "/" + filename)
+      open(filename, "wb") do |file|
+          file.write(resp.body)
+      end
+  end
 end
 
 def unzip_file
