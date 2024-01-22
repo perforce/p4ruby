@@ -1,44 +1,49 @@
 # Building P4Ruby from Source
 
 
-     Note: Make sure you have following packages installed on your system:
-           a. build-essential
-           b. libssl-dev
+1. Make sure you have following packages installed on your system:\
+        a. build-essential\
+        b. libssl-dev
 
-1. Download the Perforce C++ API from the Perforce FTP site at
-   <ftp://ftp.perforce.com/perforce> . \
+2. Download the Perforce C++ API from the Perforce FTP site at
+   <https://ftp.perforce.com/perforce>. \
    The API archive is located in release and platform-specific subdirectories and is named
    *"p4api-glibc2.3-openssl1.1.1.tgz".*
 
-   **Note: 32-bit builds of P4Ruby require a 32-bit version of the C++ API and a 32-bit version of Ruby.\
-           64-bit builds of P4Ruby require a 64-bit version of the C++ API and a 64-bit version of Ruby.**
+   **Note:** 32-bit builds of P4Ruby require a 32-bit version of the C++ API and a 32-bit version of Ruby.\
+           64-bit builds of P4Ruby require a 64-bit version of the C++ API and a 64-bit version of Ruby.
            
    Unzip the archive into an empty directory.
 
-2. Extract the P4Ruby API archive into a new, empty directory.
+3. Extract the P4Ruby API archive into a new, empty directory.
 
-3. Execute the build commands:
+4. Execute the build commands:
 
-   *bundle install \
-   bundle exec rake compile -- --with-p4api_dir=<absolute path to Perforce C++ API> \
-              --with-ssl-dir=<absolute path to OpenSSL libraries matching Perforce C++ API>*
-   
-   OR pass through environment variables\
-   *bundle exec rake compile p4api_dir=<absolute path to Perforce C++ API>*
+   ```
+   bundle install
+   bundle exec rake compile -- --with-p4api_dir=<absolute path to Perforce C++ API> --with-ssl-dir=<absolute path to OpenSSL libraries matching Perforce C++ API>
+   ```
+   OR pass through environment variables
+   ```
+   bundle exec rake compile p4api_dir=<absolute path to Perforce C++ API>
+   ``` 
+   **Note:** If the --p4api_dir flag is not provided, P4Ruby will attempt
+   to download and extract correct version of Perforce C++ API.
 
-   **Note: If the --p4api_dir flag is not provided, P4Ruby will attempt
-   to download and extract correct version of Perforce C++ API**
+5. Test your distribution.
 
-4. Test your distribution.
-
-    *bundle exec rake test*
+    ```
+    bundle exec rake test
+    ```
 
     Tests require the perforce server binary (p4d) present in the path.
    
-5. Install P4Ruby into your local gem cache:
+6. Install P4Ruby into your local gem cache:
 
-    *bundle exec rake gem*\
-    *gem install pkg/p4ruby\*.gem -- --with-p4api_dir=<absolute path to Perforce C++ API>*
+    ```
+    bundle exec rake gem
+    gem install pkg/p4ruby*.gem -- --with-p4api_dir=<absolute path to Perforce C++ API>
+    ```
 
 ## SSL support
 
