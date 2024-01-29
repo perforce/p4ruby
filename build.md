@@ -42,7 +42,7 @@
 
     ```
     bundle exec rake gem
-    gem install pkg/p4ruby*.gem -- --with-p4api_dir=<absolute path to Perforce C++ API>
+    gem install pkg/p4ruby*.gem -- --with p4api_dir=<absolute path to Perforce C++ API>
     ```
 
 ## SSL support
