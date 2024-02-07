@@ -1,7 +1,7 @@
                            Release Notes for
                 P4Ruby, Perforce's script API for Ruby
 
-                            Version 2023.1
+                            Version 2023.2
 
 Introduction
 
@@ -16,8 +16,8 @@ Introduction
     release up to the bug fix change level.
 
     Precompiled versions of P4Ruby are built against a corresponding version
-    of the Perforce	C++ API, e.g., P4Ruby 2023.1 will be compiled using a
-    2023.1 version of the P4API. You can always install P4Ruby using a
+    of the Perforce	C++ API, e.g., P4Ruby 2023.2 will be compiled using a
+    2023.2 version of the P4API. You can always install P4Ruby using a
     source-only variation, selecting a specific version of the P4API.
 
     To determine the version of your P4Ruby, and which version of the
@@ -71,13 +71,13 @@ Compatibility Statements
 
     Server Compatibility
 
-      This release of P4Ruby supports the 2023.1 Perforce Server.
+      This release of P4Ruby supports the 2023.2 Perforce Server.
       Older releases might work but are not supported.
 
     API Compatibility
 
-      This release of P4Ruby supports the 2023.1 Perforce API 
-      (2023.1/2442900). Older releases might work but are not supported.
+      This release of P4Ruby supports the 2023.2 Perforce API 
+      (2023.2/2519561). Older releases might work but are not supported.
 
     Ruby Compatibility
 
@@ -144,52 +144,69 @@ Key to symbols used in change notes below.
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 
+New functionality in 2023.2 (2023.2/2548030) (2024/01/26)
+
+	#2545341 (Job #118227) * ** ***
+	    This release of P4Ruby supports P4API 2023.2 (2023.2/2519561)
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+New functionality in 2023.1 Patch 1 (2023.1/2544327) (2024/01/19)
+
+	(Job #118834) * **
+	    This release is built against P4API (2023.1/2513900)
+	    to address possible vulnerability: CVE-2023-5759.
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
 New functionality in 2023.1 (2023.1/2446234) (2023/05/25)
 
-        #2443839 (Job #115709) * ** ***
-            This release of P4Ruby supports P4API 2023.1 (2023.1/2442900).
+	#2443839 (Job #115709) * ** ***
+	    This release of P4Ruby supports P4API 2023.1 (2023.1/2442900).
 
-        #2443217, #2438303 (Job #115281) *
-            Added support for Ruby 3.2.
+	#2443217, #2438303 (Job #115281) *
+	    Added support for Ruby 3.2.
 
-        #2439606 (Job #2439606) * **
-            Windows gems for P4Ruby are now shipped with OpenSSL 3.0.8
+	#2439606 (Job #2439606) * **
+	    Windows gems for P4Ruby are now shipped with OpenSSL 3.0.8
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 
 New functionality in 2022.1 Patch 2 (2022.1/2405581) (2023/02/10)
 
-        Important security note
-            This version addresses vulnerabilities in OpenSSL (CVE-2023-0286, 
-            CVE-2023-0215, CVE-2022-4450, CVE-2022-4304) by linking in version
-            1.1.1t of the library.
+	Important security note
+	    This version addresses vulnerabilities in OpenSSL (CVE-2023-0286,
+	    CVE-2023-0215, CVE-2022-4450, CVE-2022-4304) by linking in version
+	    1.1.1t of the library.
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 
 Bugs fixed in 2022.1 Patch 1 (2022.1/2368511)  (2022/11/10)
-    
-    (Job #113209) * **
-      Correct the handling of untranslated text left in the
-      compression buffer on Close(). Build only change.
+
+	(Job #113209) * **
+	    Correct the handling of untranslated text left in the
+	    compression buffer on Close(). Build only change.
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 
 New functionality in 2022.1 (2022.1/2359956)  (2022/10/26)
 
-    #2356959 (Job #111079) * **
-        Added support for Ruby 3.1.
+	#2356959 (Job #111079) * **
+	    Added support for Ruby 3.1.
 
-    #2299589 (Job #111080) * ** ***
-        Updated the stored spec templates to match the 2022.1 Helix Server
-        specs.
+	#2299589 (Job #111080) * ** ***
+	    Updated the stored spec templates to match the 2022.1 Helix Server
+	    specs.
 
-Bugs fixed in 2022.1
-    
-    (Job #110752) * **
-        Obliterating multiple streams no longer fails with locking error.
+Bugs fixed in 2022.1 (2022.1/2359956)  (2022/10/26)
+
+	(Job #110752) * **
+	    Obliterating multiple streams no longer fails with locking error.
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
