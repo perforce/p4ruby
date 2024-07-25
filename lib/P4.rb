@@ -363,8 +363,6 @@ class P4
             next unless( value.kind_of?( Array ) )
             next unless value[ n ]
             next if( value[ n ].kind_of?( Array ) )
-            # If the field is the revision time, convert it to a Time object
-            value[ n ] = Time.at( value[ n ].to_i ) if key == "time"
             r.set_attribute( key, value[ n ] )
           end
 
@@ -564,8 +562,10 @@ class P4
 
     def set_attribute( name, value )
       name = name.downcase
-      if( value.to_s =~ /^\d+$/ )
+      if ["rev", "change", "filesize"].include?(name)
         @attributes[ name ] = value.to_i
+      elsif name == "time"                            # If the field is the revision time, convert it to a Time object
+        @attributes[ name ] = Time.at( value.to_i )
       else
         @attributes[ name ] = value
       end

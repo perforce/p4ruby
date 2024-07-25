@@ -1,7 +1,7 @@
                            Release Notes for
                 P4Ruby, Perforce's script API for Ruby
 
-                            Version 2023.2
+                            Version 2024.1
 
 Introduction
 
@@ -16,8 +16,8 @@ Introduction
     release up to the bug fix change level.
 
     Precompiled versions of P4Ruby are built against a corresponding version
-    of the Perforce	C++ API, e.g., P4Ruby 2023.2 will be compiled using a
-    2023.2 version of the P4API. You can always install P4Ruby using a
+    of the Perforce	C++ API, e.g., P4Ruby 2024.1 will be compiled using a
+    2024.1 version of the P4API. You can always install P4Ruby using a
     source-only variation, selecting a specific version of the P4API.
 
     To determine the version of your P4Ruby, and which version of the
@@ -28,9 +28,9 @@ Introduction
 
 Important End-of-Life Notice
 
-    This major release of P4Ruby would be the last to test against Ruby 2.7 
-    which is in EOL status. This is part of our commitment to focus on supported
-    technology platforms
+    This major release of P4Ruby would be the last to support mingw64x86 
+    platform and test against Ruby 3.0 which is in EOL status. 
+    This is part of our commitment to focus on supported technology platforms.
 
 --------------------------------------------------------------------------
 Installation
@@ -71,24 +71,23 @@ Compatibility Statements
 
     Server Compatibility
 
-      This release of P4Ruby supports the 2023.2 Perforce Server.
+      This release of P4Ruby supports the 2024.1 Perforce Server.
       Older releases might work but are not supported.
 
     API Compatibility
 
-      This release of P4Ruby supports the 2023.2 Perforce API 
-      (2023.2/2519561). Older releases might work but are not supported.
+      This release of P4Ruby supports the 2024.1 Perforce API 
+      (2024.1/2625008). Older releases might work but are not supported.
 
     Ruby Compatibility
 
-      This release of P4Ruby is supported on Ruby versions 2.7 3.0, 3.1 
+      This release of P4Ruby is supported on Ruby versions 3.0, 3.1 
       and 3.2
 
       For detailed compatibility, please check the following table:
 
         Ruby Release | P4Ruby Release
         ===================================             
-             2.7     | 2020.1 or later
              3.0     | 2021.1 or later
              3.1     | 2022.1 or later
              3.2     | 2023.1 or later
@@ -110,6 +109,8 @@ Compatibility Statements
 
         Windows (x64)
           Server 2016
+          (This version supports mingw64x64. A patch will be released later 
+           only for this version with support for mingw64x86.)
         Linux
           Ubuntu 20.04, 22.04
           CentOS 8
@@ -140,6 +141,20 @@ Key to symbols used in change notes below.
       * -- requires new P4Ruby
      ** -- requires P4Ruby built with new P4API
     *** -- requires new p4d server program
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+New functionality in 2024.1 (2024.1/2627586) (2024/07/22)
+
+    #2599293 (Job #120161) * ** ***
+        This release of P4Ruby supports P4API 2024.1 (2024.1/2625008)
+
+Bugs fixed in 2024.1 (2024.1/2627586) (2024/07/22)
+
+    #2585619 (Job #119223) * **
+        The condition in the set_attribute function has been corrected 
+        to return the expected data type. 
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------

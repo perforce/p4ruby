@@ -1,3 +1,3 @@
 class P4
-  Version = VERSION = '2023.2.2548030'
+  Version = VERSION = '2024.1.2624069'
 end
