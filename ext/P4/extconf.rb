@@ -240,7 +240,7 @@ def set_platform_libs
         # Only build for 64 bit if we have more than one arch defined in CFLAGS
         $LDFLAGS.slice!('-arch i386')
         $LDFLAGS.slice!('-arch ppc')
-        $LDFLAGS += ' -framework CoreFoundation -framework Foundation'
+        $LDFLAGS += ' -framework CoreFoundation -framework Foundation -framework CoreGraphics'
       end
     when 'LINUX', 'MINGW32', 'MINGW'
       $LDFLAGS += ' -Wl,--allow-multiple-definition'
@@ -488,8 +488,15 @@ def filename
                 filename = 'p4api-openssl3.zip'
         end
     end
-  elsif RbConfig::CONFIG['target_os'].downcase =~ /darwin19|darwin[2-9][0-9]/
-    filename = 'p4api-openssl1.1.1.tgz'
+  elsif RbConfig::CONFIG['target_os'].downcase =~ /darwin19|darwin[2-9][0-9]/ || RbConfig::CONFIG['host_cpu'] =~ /aarch64|arm64/
+    if !openssl_number.to_s.empty?
+      case openssl_number.to_s
+          when /1.1/
+              filename = 'p4api-openssl1.1.1.tgz'
+          when /3.0/
+              filename = 'p4api-openssl3.tgz'
+      end
+    end
   else
     filename = 'p4api.tgz'
     if !openssl_number.to_s.empty?

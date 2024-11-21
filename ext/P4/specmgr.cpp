@@ -141,6 +141,10 @@ struct defaultspec {
     "Users;code:405;type:wlist;len:32;opt:default;;"
     },
     {
+    "hotfiles",
+    "HotFiles;code:1051;fmt:C;type:wlist;words:1;maxwords:3;len:64;opt:default;z;;"
+    },
+    {
     "job",
     "Job;code:101;rq;len:32;;"
     "Status;code:102;type:select;rq;len:10;"
