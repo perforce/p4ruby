@@ -74,6 +74,7 @@ public:
     void SetCwd( const char *c );
     void SetEnviroFile( const char *c );
     void SetEVar( const char *var, const char *val );
+    void SetVar( const char *var, const char *val );
     void SetHost( const char *h )	{ client.SetHost( h );		}
     void SetIgnoreFile( const char *f )	{ client.SetIgnoreFile( f );	}
     void SetMaxResults( int v )		{ maxResults = v;		}

@@ -333,6 +333,14 @@ static VALUE p4_set_evar( VALUE self, VALUE var, VALUE val )
     return Qtrue;
 }
 
+static VALUE p4_set_var( VALUE self, VALUE var, VALUE val )
+{
+    P4ClientApi *p4;
+    Data_Get_Struct( self, P4ClientApi, p4 );
+    p4->SetVar( StringValuePtr( var ), StringValuePtr( val ) );
+    return Qtrue;
+}
+
 static VALUE p4_get_host( VALUE self )
 {
     P4ClientApi	*p4;
@@ -1366,6 +1374,7 @@ void	Init_P4()
     rb_define_method( cP4, "enviro_file=", RUBY_METHOD_FUNC(p4_set_enviro_file), 1);
     rb_define_method( cP4, "evar", 	RUBY_METHOD_FUNC(p4_get_evar)     , 1 );
     rb_define_method( cP4, "set_evar", 	RUBY_METHOD_FUNC(p4_set_evar)     , 2 );
+    rb_define_method( cP4, "set_var", 	RUBY_METHOD_FUNC(p4_set_var)     , 2 );
     rb_define_method( cP4, "host", 	RUBY_METHOD_FUNC(p4_get_host)    , 0 );
     rb_define_method( cP4, "host=", 	RUBY_METHOD_FUNC(p4_set_host)    , 1 );
     rb_define_method( cP4, "ignore_file",RUBY_METHOD_FUNC(p4_get_ignore) , 0 );

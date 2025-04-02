@@ -454,7 +454,7 @@ def p4_platform_label
       # There are too many permutations of Windows p4api, to automate.
       raise 'Automatic fetching of p4api from perforce FTP is not supported on Windows'
     when /darwin19|darwin[2-9][0-9]/
-      "macosx1015#{p4_cpu(:darwin)}"
+      "macosx12#{p4_cpu(:darwin)}"
     when /darwin/      
       "darwin90#{p4_cpu(:darwin)}"
     when /solaris/
@@ -484,7 +484,7 @@ def filename
                 filename = 'p4api-openssl1.1.1.zip'
             when /1.0/
                 filename = 'p4api-openssl1.0.2.zip'
-            when /3.0/
+            when /3.*/
                 filename = 'p4api-openssl3.zip'
         end
     end
@@ -493,7 +493,7 @@ def filename
       case openssl_number.to_s
           when /1.1/
               filename = 'p4api-openssl1.1.1.tgz'
-          when /3.0/
+          when /3.*/
               filename = 'p4api-openssl3.tgz'
       end
     end
@@ -505,7 +505,7 @@ def filename
                 filename = 'p4api-glibc2.3-openssl1.1.1.tgz'
             when /1.0/
                 filename = 'p4api-glibc2.3-openssl1.0.2.tgz'
-            when /3.0/
+            when /3.*/
                 filename = 'p4api-glibc2.3-openssl3.tgz'
         end
     end

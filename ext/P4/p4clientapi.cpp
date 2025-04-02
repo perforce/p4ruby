@@ -151,6 +151,14 @@ P4ClientApi::SetEVar( const char *var, const char *val )
     client.SetEVar( sVar, sVal );
 }
 
+void
+P4ClientApi::SetVar( const char *var, const char *val )
+{
+    StrRef sVar( var );
+    StrRef sVal( val );
+    client.SetVar( sVar, sVal );
+}
+
 const StrPtr *
 P4ClientApi::GetEVar( const char *var )
 {

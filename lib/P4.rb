@@ -33,6 +33,32 @@
 #*******************************************************************************
 
 require 'P4/version'
+require 'fiddle'
+
+#
+# Ruby 3.4 introduced a change affecting DLL loading behavior, which impacts 
+# how dependent DLLs are resolved. Specifically, libwinpthread-1.dll is no 
+# longer automatically loaded from ruby_builtin_dlls, causing potential failures 
+# in extensions relying on it.
+#
+# To address this, we must explicitly define the DLL path for libwinpthread-1.dll 
+# before loading dependent libraries in windows. 
+#
+if Gem.win_platform?
+  dll_path = File.join(RbConfig::CONFIG['bindir'], 'ruby_builtin_dlls', 'libwinpthread-1.dll')
+
+  if File.exist?(dll_path)
+    begin
+      Fiddle.dlopen(dll_path)
+    rescue Fiddle::DLError => e
+      puts "Failed to load #{dll_path}: #{e.message}"
+      exit 1
+    end
+  else
+    puts "Error: DLL not found at #{dll_path}"
+    exit 1
+  end
+end
 
 #
 # Get the bulk of the definition of the P4 class from the API interface.
