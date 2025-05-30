@@ -251,6 +251,18 @@ void ClientUserRuby::Message(Error *e) {
 	ProcessMessage(e);
 }
 
+void ClientUserRuby::HandleError(Error *e) {
+	if (P4RDB_CALLS) fprintf(stderr, "[P4] Message()\n");
+
+	if (P4RDB_DATA) {
+		StrBuf t;
+		e->Fmt(t, EF_PLAIN);
+		fprintf(stderr, "... [%s] %s\n", e->FmtSeverity(), t.Text());
+	}
+
+	ProcessMessage(e);
+}
+
 void ClientUserRuby::OutputBinary(const char *data, int length) {
 	if (P4RDB_CALLS) fprintf(stderr, "[P4] OutputBinary()\n");
 	if (P4RDB_DATA) {

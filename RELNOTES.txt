@@ -1,7 +1,7 @@
                            Release Notes for
-                P4Ruby, Perforce's script API for Ruby
+                        P4Ruby, P4 API for Ruby
 
-                            Version 2024.2
+                            Version 2025.1
 
 Introduction
 
@@ -16,22 +16,24 @@ Introduction
     release up to the bug fix change level.
 
     Precompiled versions of P4Ruby are built against a corresponding version
-    of the Perforce	C++ API, e.g., P4Ruby 2024.2 will be compiled using a
-    2024.2 version of the P4API. You can always install P4Ruby using a
-    source-only variation, selecting a specific version of the P4API.
+    of the P4 C/C++ API, e.g., P4Ruby 2025.1 will be compiled using a
+    2025.1 version of the P4 C/C++ API. You can always install P4Ruby using a
+    source-only variation, selecting a specific version of the P4 C/C++ API.
 
     To determine the version of your P4Ruby, and which version of the
-    P4API it has been built with, issue the following command:
+    P4 C/C++ API it has been built with, issue the following command:
         ruby -rP4 -e "puts P4.identify"
-
 
 --------------------------------------------------------------------------
 
-Important End-of-Life Notice
+Important Product Rebrand Notice
 
-    This release of P4Ruby would be the last to support and test against 
-    Ruby 3.1 which is in EOL status. This is part of our commitment to 
-    focus on supported technology platforms.
+	Helix Core is now P4
+	Perforce has a new look and logo that reflects our place in DevOps
+	workflows. As part of these changes, Helix Core is now P4. Name updates
+	and new icons to align with the P4 branding will be rolled out soon.
+	To learn more, see:
+	 https://www.perforce.com/blog/vcs/introducing-the-p4-platform
 
 --------------------------------------------------------------------------
 
@@ -73,24 +75,23 @@ Compatibility Statements
 
     Server Compatibility
 
-      This release of P4Ruby supports the 2024.2 Perforce Server.
+      This release of P4Ruby supports the 2025.1 P4 Server.
       Older releases might work but are not supported.
 
     API Compatibility
 
-      This release of P4Ruby supports the 2024.2 Perforce API 
-      (2024.2/2675662). Older releases might work but are not supported.
+      This release of P4Ruby supports the 2025.1 P4 C/C++ API 
+      (2025.1/2761706). Older releases might work but are not supported.
 
     Ruby Compatibility
 
-      This release of P4Ruby is supported on Ruby versions 3.1, 3.2, 3.3 
+      This release of P4Ruby is supported on Ruby versions 3.2, 3.3 
       and 3.4
 
       For detailed compatibility, please check the following table:
 
         Ruby Release | P4Ruby Release
         ===================================             
-             3.1     | 2022.1 or later
              3.2     | 2023.1 or later
              3.3     | 2024.2 or later
              3.4     | 2024.2.1 or later
@@ -98,11 +99,11 @@ Compatibility Statements
     OpenSSL Compatibility
 
       To build P4Ruby with encrypted communication support, you must use the
-      version of OpenSSL that Perforce C/C++ API has been built against.
+      version of OpenSSL that P4 C/C++ API has been built against.
 
-      Beginning with the 2017.1 release of the Helix C/C++ API, the dependency 
+      Beginning with the 2017.1 release of the P4 C/C++ API, the dependency 
       on OpenSSL is now enforced and the SSL stub library has been removed.
-      Executables linked against the P4API libraries must also be linked against
+      Executables linked against the P4 C/C++ API libraries must also be linked against
       real OpenSSL libraries: The latest 3.0.x or 1.1.1 patch is recommended
 
     Platform Compatibility
@@ -126,7 +127,7 @@ Compatibility Statements
 
       To build P4Ruby from source, you must use a version of Ruby that
       has been compiled with the same compiler used to build the
-      Perforce C++ API: for most platforms, use gcc/g++.
+      P4 C/C++ API: for most platforms, use gcc/g++.
 
       Attempting to use a different compiler or a different version
       of the compiler causes linker errors due to differences in name
@@ -134,9 +135,9 @@ Compatibility Statements
 
     Known Limitations
 
-      The Perforce client-server protocol is not designed to support
+      The P4 client-server protocol is not designed to support
       multiple concurrent queries over the same connection. For this
-      reason, multi-threaded applications using the C++ API or the
+      reason, multi-threaded applications using the P4 C/C++ API or the
       script APIs (P4Perl, P4Ruby, etc.) should ensure that a
       separate connection is used for each thread or that only one
       thread may use a shared connection at a time.
@@ -146,8 +147,23 @@ Compatibility Statements
 Key to symbols used in change notes below.
 
       * -- requires new P4Ruby
-     ** -- requires P4Ruby built with new P4API
+     ** -- requires P4Ruby built with new P4 C/C++ API
     *** -- requires new p4d server program
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+New functionality in 2025.1 (2025.1/2767474) (2025/05/21)
+
+    #2757770 (Job #125786) * ** ***
+        This release of P4Ruby supports P4 C/C++ API 2025.1 (2025.1/2761706)
+
+Bugs fixed in 2025.1
+
+    #2753706 (Job #125659) *
+        Override the "HandleError" method in "clientuserruby", to process 
+        error data after a failed command. This change ensure errors like 
+        "Can't clobber writable file" are captured and processed as P4Message.
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------

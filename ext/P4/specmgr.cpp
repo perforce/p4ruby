@@ -131,6 +131,7 @@ struct defaultspec {
     "MaxOpenFiles;code:413;type:word;len:12;;"
     "MaxMemory;code:NNN;type:word;len:12;;"
     "Timeout;code:406;type:word;len:12;;"
+    "IdleTimeout;code:NNN;type:word;len:12;;"
     "PasswordTimeout;code:409;type:word;len:12;;"
     "LdapConfig;code:410;type:line;len:128;;"
     "LdapSearchQuery;code:411;type:line;len:128;;"

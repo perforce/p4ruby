@@ -206,7 +206,7 @@ class TC_Resolve < Test::Unit::TestCase
 
             assert_equal("(text+w)", md.yours_action, "Unexpected yours_action: #{md.yours_action}")
             assert_equal("(text+x)", md.their_action, "Unexpected their_action: #{md.their_action}")
-            assert_equal("(text+wx)", md.merge_action, "Unexpected merge_action: #{md.merge_action}")
+            assert_equal("(text+Dwx)", md.merge_action, "Unexpected merge_action: #{md.merge_action}")
             assert_equal("Filetype resolve", md.action_type, "Unexpected type: #{md.action_type}")
             assert_equal("am", md.merge_hint, "Unexpected merge_hint: #{md.merge_hint}")
             md.merge_hint

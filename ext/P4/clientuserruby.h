@@ -49,6 +49,7 @@ public:
 	// Client User methods overridden here
 	void OutputText(const char *data, int length);
 	void Message(Error *e);
+	void HandleError(Error *e);
 	void OutputStat(StrDict *values);
 	void OutputBinary(const char *data, int length);
 	void InputData(StrBuf *strbuf, Error *e);
