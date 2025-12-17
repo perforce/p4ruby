@@ -1,7 +1,7 @@
                            Release Notes for
                         P4Ruby, P4 API for Ruby
 
-                            Version 2025.1
+                            Version 2025.2
 
 Introduction
 
@@ -16,8 +16,8 @@ Introduction
     release up to the bug fix change level.
 
     Precompiled versions of P4Ruby are built against a corresponding version
-    of the P4 C/C++ API, e.g., P4Ruby 2025.1 will be compiled using a
-    2025.1 version of the P4 C/C++ API. You can always install P4Ruby using a
+    of the P4 C/C++ API, e.g., P4Ruby 2025.2 will be compiled using a
+    2025.2 version of the P4 C/C++ API. You can always install P4Ruby using a
     source-only variation, selecting a specific version of the P4 C/C++ API.
 
     To determine the version of your P4Ruby, and which version of the
@@ -75,13 +75,13 @@ Compatibility Statements
 
     Server Compatibility
 
-      This release of P4Ruby supports the 2025.1 P4 Server.
+      This release of P4Ruby supports the 2025.2 P4 Server.
       Older releases might work but are not supported.
 
     API Compatibility
 
-      This release of P4Ruby supports the 2025.1 P4 C/C++ API 
-      (2025.1/2761706). Older releases might work but are not supported.
+      This release of P4Ruby supports the 2025.2 P4 C/C++ API 
+      (2025.2/2852709). Older releases might work but are not supported.
 
     Ruby Compatibility
 
@@ -104,7 +104,7 @@ Compatibility Statements
       Beginning with the 2017.1 release of the P4 C/C++ API, the dependency 
       on OpenSSL is now enforced and the SSL stub library has been removed.
       Executables linked against the P4 C/C++ API libraries must also be linked against
-      real OpenSSL libraries: The latest 3.0.x or 1.1.1 patch is recommended
+      real OpenSSL libraries: The latest 3.x.x or 1.1.1 patch is recommended
 
     Platform Compatibility
 
@@ -117,11 +117,11 @@ Compatibility Statements
         Linux kernel 2.6+ for Intel(x86_64)
             Ubuntu 20.04, 22.04, 24.04
             CentOS 8
-            Rocky Linux 9
+            Rocky Linux 9, 10
         Linux kernel 2.6+ for ARM(aarch64)
             Ubuntu 20.04, 22.04, 24.04
             CentOS 8
-            Rocky Linux 9
+            Rocky Linux 9, 10
 
     Compiler Compatibility
 
@@ -149,6 +149,17 @@ Key to symbols used in change notes below.
       * -- requires new P4Ruby
      ** -- requires P4Ruby built with new P4 C/C++ API
     *** -- requires new p4d server program
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+New functionalities in 2025.2 (2025.2/2863692) (2025/12/03)
+
+    #2842932 (Job #128787)
+        This release of P4Ruby supports P4 C/C++ API 2025.2 (2025.2/2852709)
+
+    #2839753 (Job #128768)
+        Added support for Rocky Linux 10.
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
