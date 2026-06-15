@@ -30,7 +30,6 @@ require 'fileutils.rb'
 require 'rbconfig'
 require 'rubygems'
 require 'P4'
-require 'getoptlong'
 require 'test/unit'
 
 # if RbConfig
@@ -61,6 +60,8 @@ module P4RubyTest
   #
   # Common setup for tests
   #
+  SUPER_PASSWORD = 'P4Ruby!Super1'
+
   def setup
     super
     # The P4CONFIG value is often set by developers, we shouldn't depend on it
@@ -71,7 +72,47 @@ module P4RubyTest
     Dir.chdir(client_root)
     ENV.delete('PWD')
     init_client
+    bootstrap_super_user
     #p4.debug = 1
+  end
+
+  # On p4d 2026.1+ (Secure By Default), password authentication is enforced
+  # from the very first connection. The one unauthenticated operation allowed
+  # on a fresh server is `p4 passwd '' <new>` to set the initial password for
+  # the connecting user. Log in immediately so a ticket is written to the
+  # default ticket file for subsequent connections.
+  #
+  # Mirrors P4Python's _bootstrapSuperUser and P4Go's bootstrapSuperUser.
+  # Uses a SEPARATE bootstrap P4 object (not @p4) so this method leaves @p4
+  # unconnected — each test owns its own @p4.connect lifecycle and can set
+  # port/track/etc. options first. @p4.password is set so reconnection
+  # (which auto-presents the ticket from the default ticket file) succeeds.
+  # On p4d 2026.1+ (Secure By Default), password authentication is enforced
+  # from the very first connection. The one unauthenticated operation
+  # allowed on a fresh server is `p4 passwd '' <new>` to set the initial
+  # super user password. Log in immediately so a ticket is cached in the
+  # default ticket file for all subsequent test connections.
+  #
+  # Bootstrap runs on @p4 itself, NOT a separate P4 object. In rsh mode
+  # each connection spawns its own p4d child; a second rsh child whose
+  # SIGCHLD arrives mid-test interrupts @p4's blocking pipe reads ("rpc
+  # send receive errors"). Single rsh process avoids that race.
+  def bootstrap_super_user
+    @p4.connect
+    # Ensure user record exists (best-effort) before passwd.
+    begin
+      user_spec = @p4.fetch_user
+      @p4.save_user(user_spec, '-f')
+    rescue
+      # SBD may reject pre-auth commands; passwd will create the user.
+    end
+    @p4.run_password('', SUPER_PASSWORD)
+    @p4.password = SUPER_PASSWORD
+    @p4.run_login
+  ensure
+    # Disconnect so each test owns its own connect lifecycle. The ticket
+    # written by run_login is auto-presented on reconnect.
+    @p4.disconnect if @p4.connected?
   end
 
   #

@@ -49,29 +49,49 @@ class TC_Password < Test::Unit::TestCase
     ticket_file = client_root + '/.p4tickets'
     p4.ticket_file = ticket_file
     assert_equal(p4.ticket_file, ticket_file, 'Ticket file not set correctly')
+    # Use a strong (8+ char) test password so r26.1 SBD's security=4 accepts it.
+    test_password = 'P4Test!Pwd99'
+
     begin
       assert(p4.connect, 'Failed to connect to Perforce server')
+      # Ticket file was swapped to an empty file above; re-login so the
+      # custom file has a valid ticket. Mirrors P4Python's testPasswords
+      # "must login explicitly" step for SBD servers.
+      p4.password = SUPER_PASSWORD
+      p4.run_login
       assert(p4.fetch_user, 'Failed to fetch user record')
-      assert(p4.run_password('', 'foo'), 'Failed to set password')
-      p4.password = 'foo'
-      assert(p4.password == 'foo', 'Password not set correctly')
+      assert(p4.run_password(SUPER_PASSWORD, test_password), 'Failed to set password')
+      p4.password = test_password
+      assert(p4.password == test_password, 'Password not set correctly')
       assert(p4.run_login, 'Failed to login to server')
       # Note: p4.password is set by the login above to the ticket.
-      assert(p4.run_password('foo', ''), 'Failed to clear password')
+      # Restore back to SUPER_PASSWORD so the bootstrap-set state is preserved.
+      assert(p4.run_password(test_password, SUPER_PASSWORD), 'Failed to restore password')
 
       old_user = p4.user
 
+      # After run_password above, the prior ticket is invalid. Re-login as
+      # super before fetching/creating the foo:bar user spec.
+      p4.password = SUPER_PASSWORD
+      p4.run_login
+
       #	Ensure that ticket file is correctly parsed for user names
       #	that contain a ':'.
-      p4.user = 'foo:bar'
+      # As super (still logged in), create foo:bar's user record and set its
+      # initial password. Mirrors P4Go's TestPassword pattern (lines 1243-1250).
       user = p4.fetch_user('foo:bar')
-      p4.save_user(user)
-      assert(p4.run_password('', 'foo'), 'Failed to set password')
-      p4.password = 'foo'
-      assert(p4.password == 'foo', 'Password not set correctly')
+      p4.save_user(user, '-f')
+      p4.input = [test_password, test_password]
+      p4.run('passwd', 'foo:bar')
+      # Clear the password-reset flag so foo:bar can log in.
+      p4.save_user(user, '-f')
+
+      # Now switch to foo:bar and log in to write its ticket.
+      p4.user = 'foo:bar'
+      p4.password = test_password
+      assert(p4.password == test_password, 'Password not set correctly')
       assert(p4.run_login, 'Failed to login to server')
       # Note: p4.password is set by the login above to the ticket.
-      assert(p4.run_password('foo', ''), 'Failed to clear password')
 
       assert(File.exist?(ticket_file), 'Ticket file not created')
 

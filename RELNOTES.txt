@@ -1,7 +1,7 @@
                            Release Notes for
                         P4Ruby, P4 API for Ruby
 
-                            Version 2025.2
+                            Version 2026.1
 
 Introduction
 
@@ -23,6 +23,18 @@ Introduction
     To determine the version of your P4Ruby, and which version of the
     P4 C/C++ API it has been built with, issue the following command:
         ruby -rP4 -e "puts P4.identify"
+
+--------------------------------------------------------------------------
+
+Important End-of-Life Notice
+
+    This release of P4Ruby is the last to support the mingw64x86 platform
+    and test against Ruby 3.2, which is in EOL status. This is part of our
+    commitment to focus on supported technology platforms.
+
+    This release of P4Ruby is the last to support and test against Windows 10,
+    which is in EOL status. This is part of our commitment to focus on
+    supported technology platforms.
 
 --------------------------------------------------------------------------
 
@@ -75,13 +87,13 @@ Compatibility Statements
 
     Server Compatibility
 
-      This release of P4Ruby supports the 2025.2 P4 Server.
+      This release of P4Ruby supports the 2026.1 P4 Server.
       Older releases might work but are not supported.
 
     API Compatibility
 
-      This release of P4Ruby supports the 2025.2 P4 C/C++ API 
-      (2025.2/2852709). Older releases might work but are not supported.
+      This release of P4Ruby supports the 2026.1 P4 C/C++ API
+      (2026.1/2951233). Older releases might work but are not supported.
 
     Ruby Compatibility
 
@@ -101,10 +113,11 @@ Compatibility Statements
       To build P4Ruby with encrypted communication support, you must use the
       version of OpenSSL that P4 C/C++ API has been built against.
 
-      Beginning with the 2017.1 release of the P4 C/C++ API, the dependency 
+      Beginning with the 2017.1 release of the P4 C/C++ API, the dependency
       on OpenSSL is now enforced and the SSL stub library has been removed.
       Executables linked against the P4 C/C++ API libraries must also be linked against
-      real OpenSSL libraries: The latest 3.x.x or 1.1.1 patch is recommended
+      real OpenSSL libraries. The 2026.1 server requires OpenSSL 3.x.x.
+      It is recommended to use the latest available patch version.
 
     Platform Compatibility
 
@@ -112,15 +125,13 @@ Compatibility Statements
       only on the following platforms:
 
         Windows for Intel(x64)
-            Server 2016, 2019, 2022
+            Server 2016, 2019, 2022, 2025
             Windows 10, 11
         Linux kernel 2.6+ for Intel(x86_64)
-            Ubuntu 20.04, 22.04, 24.04
-            CentOS 8
+            Ubuntu 22.04, 24.04
             Rocky Linux 9, 10
         Linux kernel 2.6+ for ARM(aarch64)
-            Ubuntu 20.04, 22.04, 24.04
-            CentOS 8
+            Ubuntu 22.04, 24.04
             Rocky Linux 9, 10
 
     Compiler Compatibility
@@ -151,6 +162,15 @@ Key to symbols used in change notes below.
     *** -- requires new p4d server program
 
 --------------------------------------------------------------------------
+
+New functionalities in 2026.1 (2026.1/2974577) (2026-06-11)
+
+    #2948863 (Job #133662) * ** ***
+        This release of P4Ruby supports the 2026.1 P4 C/C++ API
+
+    (Job #128762)
+        Added support for Windows Server 2025
+
 --------------------------------------------------------------------------
 
 New functionalities in 2025.2 (2025.2/2863692) (2025/12/03)

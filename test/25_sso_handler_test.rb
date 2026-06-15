@@ -71,7 +71,9 @@ class TC_SSO < Test::Unit::TestCase
         begin
           p4.run_login( 'Passw0rd' )
         rescue P4Exception => e
-          assert( e.to_s.include?("[Error]: Perforce password (P4PASSWD) invalid or unset."), "Exception thrown: #{e}" )
+          assert( e.to_s.include?("[Error]: Perforce password (P4PASSWD) invalid or unset.") ||
+                  e.to_s.include?("[Error]: Authentication failed."),
+                  "Exception thrown: #{e}" )
         end
         assert_equal( {}, p4.ssovars )
       rescue P4Exception => e
@@ -94,7 +96,9 @@ class TC_SSO < Test::Unit::TestCase
         begin
           p4.run_login( 'Passw0rd' )
         rescue P4Exception => e
-          assert( e.to_s.include?("[Error]: Perforce password (P4PASSWD) invalid or unset."), "Exception thrown: #{e}" )
+          assert( e.to_s.include?("[Error]: Perforce password (P4PASSWD) invalid or unset.") ||
+                  e.to_s.include?("[Error]: Authentication failed."),
+                  "Exception thrown: #{e}" )
         end
         assert_equal( {}, p4.ssovars )
       rescue P4Exception => e
@@ -117,7 +121,9 @@ class TC_SSO < Test::Unit::TestCase
         begin
           assert_equal( [], p4.run_login( 'Passw0rd' ) )
         rescue P4Exception => e
-          assert( e.to_s.include?("[Error]: Perforce password (P4PASSWD) invalid or unset."), "Exception thrown: #{e}" )
+          assert( e.to_s.include?("[Error]: Perforce password (P4PASSWD) invalid or unset.") ||
+                  e.to_s.include?("[Error]: Authentication failed."),
+                  "Exception thrown: #{e}" )
         end
         assert_equal( {}, p4.ssovars )
       rescue P4Exception => e
